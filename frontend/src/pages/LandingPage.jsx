@@ -1,6 +1,6 @@
-import Header from "../components/header/Header";
-import Wave from "../components/Waves/Wave";
-import Content from "../components/content/Content";
+import Header from "../components/Home/header/Header";
+import Wave from "../components/Home/Waves/Wave";
+import Content from "../components/Home/content/Content";
 function LandingPage() {
   const height = {
     height: "100vh",

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import BukSuLogo from "../../assets/BukSuLogo.png";
-import COTLogo from "../../assets/COTLogo.png";
+import BukSuLogo from "../../../assets/BukSuLogo.png";
+import COTLogo from "../../../assets/COTLogo.png";
 import LoginModal from "../loginModal/LoginModal";
 import "./style.css";
 

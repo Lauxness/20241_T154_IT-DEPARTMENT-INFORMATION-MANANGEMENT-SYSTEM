@@ -1,4 +1,4 @@
-import image_model1 from "../../assets/Image1.png";
+import image_model1 from "../../../assets/Image1.png";
 import { MdArrowRightAlt } from "react-icons/md";
 import "./style.css";
 function Content() {
