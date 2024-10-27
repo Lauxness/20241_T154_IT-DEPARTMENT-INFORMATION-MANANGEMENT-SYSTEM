@@ -11,7 +11,8 @@ function LoginModal(props) {
   };
 
   const continueWithGoogle = () => {
-    const url = "http://localhost:3000/subscribe ";
+    const url = "http://localhost:4000/subscribe";
+    console.log(captcha);
     fetch(url, {
       method: "POST",
       headers: {
@@ -31,7 +32,7 @@ function LoginModal(props) {
         <div className="pop-up-inner">
           <h2>Sign in with Google</h2>
           <ReCAPTCHA
-            sitekey="6Lf_0mkqAAAAAE1-c_dX0-Z0AXrkGZ6CDHy3jTRy"
+            sitekey="6LcjQm0qAAAAADIuGQVgIIlFR_rtgpm0dcad97ly"
             onChange={(val) => updateCaptcha(val)}
           />
           <GoogleButton type="light" onClick={continueWithGoogle} />
