@@ -1,5 +1,5 @@
 const express = require("express");
-const indexRoute = require("./routes/landing");
+const landingRoute = require("./routes/landing");
 const homeRoute = require("./routes/home");
 const dashboardRoute = require("./routes/dashboard");
 const messageStudentRoute = require("./routes/messageStudent");
@@ -11,7 +11,7 @@ const Authentication = () => {};
 
 app.use(express.json());
 //landing and login
-app.use("/index", indexRoute);
+app.use("/index", landingRoute);
 //home
 app.use("/home", homeRoute);
 //search and view,delete,update and add student info

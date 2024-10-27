@@ -1,4 +1,8 @@
 const request = require("request");
+const dotenv = require("dotenv");
+
+dotenv.config();
+
 const verifyCaptcha = (req, res) => {
   if (
     req.body.captcha === undefined ||
@@ -7,7 +11,7 @@ const verifyCaptcha = (req, res) => {
   ) {
     return res.json({ success: false, msg: "Please Select Captcha" });
   }
-  const secretKey = "6LcjQm0qAAAAAIW9r_bHUg2jNDaIkbJYrB90ATCT";
+  const secretKey = process.env.CAPTCHA_SECRET_KEY;
   const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.socket.remoteAddress}`;
   request(verifyUrl, (err, response, body) => {
     body = JSON.parse(body);
