@@ -18,6 +18,6 @@ router.post("/generate_report", (req, res) => {
 });
 
 router.use("/enrollment_officer", adminRoute);
-router.use("/logout", adminRoute);
+router.use("/logout", () => {});
 
 module.exports = router;
