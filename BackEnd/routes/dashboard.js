@@ -16,5 +16,8 @@ router.get("/enrollment_officer", (req, res) => {
 router.post("/generate_report", (req, res) => {
   generateReport(req, res);
 });
+
 router.use("/enrollment_officer", adminRoute);
+router.use("/logout", adminRoute);
+
 module.exports = router;

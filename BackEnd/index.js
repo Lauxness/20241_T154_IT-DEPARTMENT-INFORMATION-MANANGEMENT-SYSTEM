@@ -23,4 +23,4 @@ app.use("/message", messageStudentRoute);
 //dashboard
 app.use("/dashboard", dashboardRoute);
 
-app.listen(3000);
+app.listen(7000);
