@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const mongoose = require("mongoose");
 const landingRoute = require("./routes/landing");
 const homeRoute = require("./routes/home");
 const dashboardRoute = require("./routes/dashboard");
@@ -34,6 +35,16 @@ app.use("/dashboard", dashboardRoute);
 app.use("/google", googleRequestRoute);
 app.use("/oauth", googleAuthRoute);
 
-app.listen(PORT, () => {
-  console.log(`Listening to port ${PORT}`);
-});
+//mongodb connection
+mongoose
+  .connect(process.env.MONGODB)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(
+        `Connected to DATABSE and server is Listening to port ${PORT}`
+      );
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });
