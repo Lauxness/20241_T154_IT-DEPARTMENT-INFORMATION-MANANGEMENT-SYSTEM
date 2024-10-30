@@ -1,27 +1,38 @@
-const request = require("request");
+const axios = require("axios");
 const dotenv = require("dotenv");
 
 dotenv.config();
 
-const verifyCaptcha = (req, res) => {
-  if (
-    req.body.captcha === undefined ||
-    req.body.captcha === "" ||
-    req.body.captcha === null
-  ) {
+const verifyCaptcha = async (req, res) => {
+  const { captcha } = req.body;
+
+  if (!captcha) {
     return res.json({ success: false, msg: "Please Select Captcha" });
   }
-  const secretKey = process.env.CAPTCHA_SECRET_KEY;
-  const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.socket.remoteAddress}`;
-  request(verifyUrl, (err, response, body) => {
-    body = JSON.parse(body);
 
-    if (body.success !== undefined && !body.success) {
+  const secretKey = process.env.CAPTCHA_SECRET_KEY;
+  const verifyUrl = `https://google.com/recaptcha/api/siteverify`;
+
+  try {
+    const response = await axios.post(verifyUrl, null, {
+      params: {
+        secret: secretKey,
+        response: captcha,
+        remoteip: req.socket.remoteAddress,
+      },
+    });
+
+    if (response.data.success) {
+      return res.json({ success: true, msg: "Captcha Passed" });
+    } else {
       return res.json({ success: false, msg: "Failed captcha verification" });
     }
-    return (
-      res.json({ success: true, msg: "Captcha Passed" }), res.send("asdfsadf")
-    );
-  });
+  } catch (error) {
+    console.error("Error verifying captcha:", error);
+    return res
+      .status(500)
+      .json({ success: false, msg: "Internal server error" });
+  }
 };
+
 module.exports = verifyCaptcha;

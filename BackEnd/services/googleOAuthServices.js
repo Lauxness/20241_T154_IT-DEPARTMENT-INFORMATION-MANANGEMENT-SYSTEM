@@ -6,9 +6,8 @@ async function getUserData(access_token) {
   const respone = await fetch(
     `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
   );
-
   const data = await respone.json();
-  console.log(data);
+  return data;
 }
 async function getToken(req, res) {
   console.log("123123");
@@ -20,13 +19,15 @@ async function getToken(req, res) {
       process.env.CLIENT_SECRET,
       redirectUrl
     );
-    const res = await oAuth2Client.getToken(code);
-    await oAuth2Client.setCredentials(res.tokens);
+    const response = await oAuth2Client.getToken(code);
+    await oAuth2Client.setCredentials(response.tokens);
     console.log("Tokens Acquired");
     const user = oAuth2Client.credentials;
     console.log(user);
 
-    await getUserData(user.access_token);
+    const data = await getUserData(user.access_token);
+    const userString = encodeURIComponent(JSON.stringify(data));
+    res.redirect(`http://localhost:5173/home?user=${userString}`);
   } catch (err) {
     console.log("Cant sign in");
   }
