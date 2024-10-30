@@ -1,0 +1,36 @@
+[
+  {
+    "name": "John Anton S. Abug",
+    "organisation": "Unscathed",
+    "role": "UI/UX Designer",
+    "role2": "",
+    "description": ["focuses on creating intuitive and engaging user interfaces and experiences, ensuring that products are both visually appealing and user-friendly."],
+    "imageSrc": "develop/Tonyo.jpg"
+  },
+  {
+    "name": "David Job A. Lolo",
+    "organisation": "Unscathed",
+    "role": "Virtual Assistant",
+    "role2": "Front End DEV",
+    "description": ["responsible for implementing the visual and interactive elements of a website or application, translating design prototypes into functional code."],
+    "imageSrc": "develop/DJ.png"
+  },
+  {
+    "name": "Rey Anthony P. Rojo",
+    "organisation": "Unscathed",
+    "role": "Full Stack",
+    "role2": "Back End DEV",
+    "description": ["manages server-side logic, database interactions and front-end connections, ensuring that the application functions smoothly and efficiently behind the scenes"],
+    "imageSrc": "develop/Anthony.jpg"
+  },
+  {
+    "name": "Zhandarra Sumbalan",
+    "organisation": "Unscathed",
+    "role": "Project Manager",
+    "role2": "",
+    "description": [
+      "oversees the planning, execution, and delivery of projects, coordinating team efforts and resources to meet deadlines and achieve project goals"
+    ],
+    "imageSrc": "develop/Zhandy.png"
+  }
+]
