@@ -6,8 +6,8 @@ const {
 } = require("../services/adminServices");
 const router = express.Router();
 
-router.post("/add", (req, res) => {
-  addEnrollmentOfficer(req, res);
+router.post("/add", async (req, res) => {
+  await addEnrollmentOfficer(req, res);
 });
 router.delete("/:id", (req, res) => {
   deleteEnrollmentOfficer(req, res);

@@ -14,7 +14,7 @@ async function getToken(req, res) {
   console.log("123123");
   const code = req.query.code;
   try {
-    const redirectUrl = "http://localhost:3000/oauth";
+    const redirectUrl = "http://localhost:8000/oauth";
     const oAuth2Client = new OAuth2Client(
       process.env.CLIENT_ID,
       process.env.CLIENT_SECRET,
