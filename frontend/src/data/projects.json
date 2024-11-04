@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Advanced Database Systems",
+    "imageSrc": "projects/project.png",
+    "description": "design and optimize the database schema to ensure efficient data storage and retrieval for the centralized system.",
+    "skills": ["T149"]
+  },
+  {
+    "title": "Systems Integration and Architecture 1",
+    "imageSrc": "projects/project.png",
+    "description": "architect the system to ensure effective integration of various modules and scalability for future enhancements.",
+    "skills": ["T150"]
+  },
+  {
+    "title": "Information Assurance and Security 1",
+    "imageSrc": "projects/project.png",
+    "description": "implement security measures, to protect sensitive student information in compliance with standards.",
+    "skills": ["T152"]
+  },
+  {
+    "title": "Integrative Programming and Technologies 2",
+    "imageSrc": "projects/project.png",
+    "description": "develop the front-end interface and integrate it with back-end services to create a seamless user experience",
+    "skills": ["T154"]
+  }
+]
