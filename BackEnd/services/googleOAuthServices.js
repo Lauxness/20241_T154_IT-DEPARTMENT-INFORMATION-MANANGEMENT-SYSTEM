@@ -3,32 +3,30 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 async function getUserData(access_token) {
-  const respone = await fetch(
+  const response = await fetch(
     `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
   );
-
-  const data = await respone.json();
+  const data = await response.json();
   console.log(data);
 }
 async function getToken(req, res) {
-  console.log("123123");
   const code = req.query.code;
   try {
-    const redirectUrl = "http://localhost:8000/oauth";
+    const redirectURI = "http://localhost:8000/index/login/oauth";
     const oAuth2Client = new OAuth2Client(
       process.env.CLIENT_ID,
       process.env.CLIENT_SECRET,
-      redirectUrl
+      redirectURI
     );
     const res = await oAuth2Client.getToken(code);
     await oAuth2Client.setCredentials(res.tokens);
-    console.log("Tokens Acquired");
+    console.log("Tokens Acquired: ", res.tokens);
     const user = oAuth2Client.credentials;
-    console.log(user);
-
+    /*  console.log(user); */
     await getUserData(user.access_token);
   } catch (err) {
     console.log("Cant sign in");
   }
 }
+
 module.exports = getToken;

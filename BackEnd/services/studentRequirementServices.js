@@ -1,8 +1,18 @@
+const path = require("path");
+const fs = require("fs");
+const { version } = require("os");
+const { auth } = require("google-auth-library");
+
 const viewRequirements = (req, res, student) => {
   res.send(console.log(id));
 };
 const uploadImage = (req, res) => {
-  res.send(console.log("Uploaded Image"));
+  const drive = google.drive({
+    version: "v3",
+    auth: oauth2Client,
+  });
+
+  const filePath = path.join(__dirname, "./testImage.png");
 };
 const updateRequirement = (req, res) => {
   const id = req.params.id;

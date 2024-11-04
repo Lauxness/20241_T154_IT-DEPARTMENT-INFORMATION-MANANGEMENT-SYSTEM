@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const session = require("express-session");
 const mongoose = require("mongoose");
 const landingRoute = require("./routes/landing");
 const homeRoute = require("./routes/home");
@@ -9,31 +10,37 @@ const notificationRoute = require("./routes/notification");
 const studentRoute = require("./routes/student");
 const googleAuthRoute = require("./routes/googleOAuth");
 const googleRequestRoute = require("./routes/googleRequest");
+const { Authorization } = require("./services/AuthorizationServices");
 
 dotenv.config();
 
-const PORT = process.env.PORT;
-
 const app = express();
 
-const Authentication = () => {};
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false },
+  })
+);
+
+const PORT = process.env.PORT;
 
 app.use(express.json());
 //landing and login
 app.use("/index", landingRoute);
 //home
-app.use("/home", homeRoute);
+app.use("/home", Authorization, homeRoute);
 //search and view,delete,update and add student info
-app.use("/students", studentRoute);
+app.use("/students", Authorization, studentRoute);
 //notifications
-app.use("/notification", notificationRoute);
+app.use("/notification", Authorization, notificationRoute);
 //message student
-app.use("/message", messageStudentRoute);
+app.use("/message", Authorization, messageStudentRoute);
 //dashboard
-app.use("/dashboard", dashboardRoute);
+app.use("/dashboard", Authorization, dashboardRoute);
 //google
-app.use("/google", googleRequestRoute);
-app.use("/oauth", googleAuthRoute);
 
 //mongodb connection
 mongoose

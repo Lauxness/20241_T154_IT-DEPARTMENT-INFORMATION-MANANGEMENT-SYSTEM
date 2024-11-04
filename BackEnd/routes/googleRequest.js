@@ -4,7 +4,8 @@ const { OAuth2Client } = require("google-auth-library");
 const { getGoogleUrl } = require("../services/googleRequestServices");
 
 router.post("/request", async (req, res) => {
-  await getGoogleUrl(req, res);
+  const redirectURI = await getGoogleUrl();
+  res.json({ url: redirectURI });
 });
 
 module.exports = router;
