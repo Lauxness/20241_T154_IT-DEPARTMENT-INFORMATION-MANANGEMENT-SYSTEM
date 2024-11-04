@@ -18,14 +18,19 @@ async function getToken(req, res) {
       process.env.CLIENT_SECRET,
       redirectURI
     );
-    const res = await oAuth2Client.getToken(code);
-    await oAuth2Client.setCredentials(res.tokens);
-    console.log("Tokens Acquired: ", res.tokens);
+    const { tokens } = await oAuth2Client.getToken(code);
+    req.session.tokens = tokens;
+    console.log("This is the session token", req.session.tokens);
+    await oAuth2Client.setCredentials(tokens);
+    console.log("Tokens Acquired: ", tokens);
     const user = oAuth2Client.credentials;
     /*  console.log(user); */
     await getUserData(user.access_token);
+    res.cookie("session_id", "123456789", { maxAge: 3600000, httpOnly: true }); // Set a cookie
+    res.json({ message: "Tokens acquired and cookie set!" });
   } catch (err) {
     console.log("Cant sign in");
+    res.end();
   }
 }
 

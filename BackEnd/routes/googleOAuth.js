@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const getToken = require("../services/googleOAuthServices");
-const { OAuth2Client } = require("google-auth-library");
 const { getGoogleUrl } = require("../services/googleRequestServices");
 
 router.get("/oauth", async (req, res) => {

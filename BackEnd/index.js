@@ -1,33 +1,35 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const session = require("express-session");
+const cors = require("cors");
 const mongoose = require("mongoose");
-const landingRoute = require("./routes/landing");
+const landingRoute = require("./routes/login");
 const homeRoute = require("./routes/home");
 const dashboardRoute = require("./routes/dashboard");
 const messageStudentRoute = require("./routes/messageStudent");
 const notificationRoute = require("./routes/notification");
 const studentRoute = require("./routes/student");
-const googleAuthRoute = require("./routes/googleOAuth");
-const googleRequestRoute = require("./routes/googleRequest");
 const { Authorization } = require("./services/AuthorizationServices");
 
 dotenv.config();
 
 const app = express();
-
+app.use(express.json());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false },
+    cookie: {
+      secure: false,
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    },
   })
 );
 
 const PORT = process.env.PORT;
 
-app.use(express.json());
 //landing and login
 app.use("/index", landingRoute);
 //home
