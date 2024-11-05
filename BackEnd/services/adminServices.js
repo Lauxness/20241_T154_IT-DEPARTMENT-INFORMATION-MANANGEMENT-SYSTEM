@@ -28,7 +28,21 @@ const addEnrollmentOfficer = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
+const searchEnrollmentOfficer = async (req, res) => {
+  const id = req.params.id;
+  try {
+    if (id) {
+      // Get a specific Enrollment Officer by ID
+      const officer = await Accounts.findById(id);
+      if (!officer) {
+        return res.status(404).json({ error: "Enrollment Officer not found" });
+      }
+      return res.status(200).json(officer);
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 const deleteEnrollmentOfficer = async (req, res) => {
   const id = req.params.id;
   try {
@@ -74,4 +88,5 @@ module.exports = {
   addEnrollmentOfficer,
   deleteEnrollmentOfficer,
   updateEnrollmentOfficer,
+  searchEnrollmentOfficer,
 };

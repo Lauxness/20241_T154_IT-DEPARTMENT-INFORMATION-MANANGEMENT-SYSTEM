@@ -34,15 +34,15 @@ const PORT = process.env.PORT;
 //landing and login
 app.use("/index", landingRoute);
 //home
-app.use("/home", Authorization, homeRoute);
+app.use("/home", homeRoute);
 //search and view,delete,update and add student info
-app.use("/students", Authorization, studentRoute);
+app.use("/students", studentRoute);
 //notifications
-app.use("/notification", Authorization, notificationRoute);
+app.use("/notification", notificationRoute);
 //message student
-app.use("/message", Authorization, messageStudentRoute);
+app.use("/message", messageStudentRoute);
 //dashboard
-app.use("/dashboard", Authorization, dashboardRoute);
+app.use("/dashboard", dashboardRoute);
 //google
 
 //mongodb connection
