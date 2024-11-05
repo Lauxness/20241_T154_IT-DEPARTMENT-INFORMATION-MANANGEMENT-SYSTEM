@@ -20,6 +20,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    visited: true,
     cookie: {
       secure: false,
       httpOnly: true,

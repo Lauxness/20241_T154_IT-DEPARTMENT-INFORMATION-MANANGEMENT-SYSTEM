@@ -11,7 +11,7 @@ const {
 router.get("/", (req, res) => {
   viewRequirements(req, res, "Sample");
 });
-router.post("/upload_image", (req, res) => {
+router.get("/upload_image", (req, res) => {
   uploadImage(req, res);
 });
 router.patch("/:id", (req, res) => {

@@ -1,4 +1,5 @@
 const { OAuth2Client } = require("google-auth-library");
+const Accounts = require("../models/accountsModel");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -24,9 +25,9 @@ async function getToken(req, res) {
     await oAuth2Client.setCredentials(tokens);
     console.log("Tokens Acquired: ", tokens);
     const user = oAuth2Client.credentials;
-    /*  console.log(user); */
+
     await getUserData(user.access_token);
-    res.cookie("session_id", "123456789", { maxAge: 3600000, httpOnly: true }); // Set a cookie
+
     res.json({ message: "Tokens acquired and cookie set!" });
   } catch (err) {
     console.log("Cant sign in");
