@@ -11,6 +11,7 @@ function Header() {
   const triggerLogin = () => {
     if (trigger) {
       setTrigger(false);
+      console.log("closed");
     } else {
       setTrigger(true);
     }

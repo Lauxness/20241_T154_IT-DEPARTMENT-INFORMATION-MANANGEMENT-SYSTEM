@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const captchaRoute = require("./captcha");
-const googleOAuthRoute = require("./googleOAuth");
-
+const { googleAuth } = require("../services/googleOAuthServices");
 router.use("/verifyCaptcha", captchaRoute);
-router.use("/login", googleOAuthRoute);
+router.get("/login/oauth", googleAuth);
 
 module.exports = router;

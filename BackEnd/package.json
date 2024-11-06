@@ -18,8 +18,11 @@
     "express-session": "^1.18.1",
     "google-auth-library": "^9.14.2",
     "googleapis": "^144.0.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.3",
     "node-fetch": "^3.3.2",
+    "passport": "^0.7.0",
+    "passport-google-oauth2": "^0.2.0",
     "request": "^2.88.2"
   },
   "devDependencies": {

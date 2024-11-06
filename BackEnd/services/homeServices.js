@@ -4,7 +4,8 @@ const homePage = (req, res) => {
   console.log("current refresh token: ", refresh_token);
 };
 const addStudent = (req, res) => {
-  res.send(console.log("add new student"));
+  const newStudent = req.body;
+  console.log(newStudent);
 };
 const searchStudent = (req, res) => {
   const parameter = req.params.parameter;

@@ -1,26 +1,31 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
-  const location = useLocation();
-  let name;
+  const [userInfo, setUserInfo] = useState(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    // Create a URLSearchParams object from the current location's search string
-    const queryParams = new URLSearchParams(location.search);
+    const data = localStorage.getItem("user-info");
+    const userData = JSON.parse(data);
+    console.log(userData);
+    setUserInfo(userData);
+  }, []);
 
-    // Get the 'user' parameter
-    const user = queryParams.get("user");
+  const handleLogout = () => {
+    localStorage.removeItem("user-info");
+    navigate("/");
+  };
 
-    if (user) {
-      // Decode and parse the user data
-      const parsedUser = JSON.parse(decodeURIComponent(user));
-      name = parsedUser.name;
-      console.log(name);
-      console.log("Authenticated user:", parsedUser);
-      // You can now use the parsedUser in your component state or UI
-    }
-  }, [location]);
-
-  return <>Welcome to home page</>;
+  return (
+    <>
+      <h1>Welcome {userInfo?.name}</h1>
+      <h3>{`Email Address: ${userInfo?.emailAddress}`}</h3>
+      <h3>{`Role: ${userInfo?.role}`}</h3>
+      <h3>{`Assigned year: ${userInfo?.assignedYear}rd Year`}</h3>
+      <img src={userInfo?.profilePicture} alt={userInfo?.name} />
+      <button onClick={handleLogout}>Logout</button>
+    </>
+  );
 }
 export default Home;

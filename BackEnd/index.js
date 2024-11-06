@@ -10,25 +10,13 @@ const messageStudentRoute = require("./routes/messageStudent");
 const notificationRoute = require("./routes/notification");
 const studentRoute = require("./routes/student");
 const { Authorization } = require("./services/AuthorizationServices");
+require("./services/googleOAuthServices");
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    visited: true,
-    cookie: {
-      secure: false,
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    },
-  })
-);
-
+app.use(cors());
 const PORT = process.env.PORT;
 
 //landing and login
@@ -36,13 +24,13 @@ app.use("/index", landingRoute);
 //home
 app.use("/home", homeRoute);
 //search and view,delete,update and add student info
-app.use("/students", studentRoute);
+app.use("/students", Authorization, studentRoute);
 //notifications
-app.use("/notification", notificationRoute);
+app.use("/notification", Authorization, notificationRoute);
 //message student
-app.use("/message", messageStudentRoute);
+app.use("/message", Authorization, messageStudentRoute);
 //dashboard
-app.use("/dashboard", dashboardRoute);
+app.use("/dashboard", Authorization, dashboardRoute);
 //google
 
 //mongodb connection

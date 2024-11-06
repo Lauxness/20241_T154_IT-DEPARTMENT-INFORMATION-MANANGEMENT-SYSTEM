@@ -5,8 +5,6 @@ import { Developers } from "../components/Developers/Developers";
 import { Projects } from "../components/About/Projects";
 import { Contact } from "../components/Contact/Contact";
 import Content from "../components/Home/content/Content";
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 function LandingPage() {
   const height = {
     height: "700px",
@@ -15,23 +13,8 @@ function LandingPage() {
   };
   const style1 = {
     position: "relative",
+    overflow: "hidden",
   };
-  const location = useLocation();
-
-  useEffect(() => {
-    // Create a URLSearchParams object from the current location's search string
-    const queryParams = new URLSearchParams(location.search);
-
-    // Get the 'user' parameter
-    const user = queryParams.get("user");
-
-    if (user) {
-      // Decode and parse the user data
-      const parsedUser = JSON.parse(decodeURIComponent(user));
-      console.log("Authenticated user:", parsedUser);
-      // You can now use the parsedUser in your component state or UI
-    }
-  }, [location]);
   return (
     <>
       <div className="container" style={style1}>
