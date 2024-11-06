@@ -1,0 +1,120 @@
+.header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  transition: 0.5s;
+  right: 0;
+}
+.active {
+  background-color: #2d55fb;
+}
+.project-name {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  padding: 15px 13%;
+}
+.project-name p {
+  font-size: 1.3em;
+  font-weight: 500;
+  color: white;
+}
+.navbar {
+  display: flex;
+  background-color: #ffffff33;
+  justify-content: space-between;
+  font-size: 1em;
+  position: relative;
+  padding: 0 13%;
+}
+.nav-links {
+  display: flex;
+  gap: 30px;
+  padding: 15px 0;
+}
+.navbar a {
+  text-decoration: none;
+  color: white;
+  padding: 0;
+  margin: 0;
+}
+.navbar button {
+  max-width: 250px;
+  width: 100%;
+  background-color: #207bfa;
+  border: none;
+  color: white;
+  font-family: poppins;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+.hamburger {
+  position: absolute;
+  top: 0.85rem;
+
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 2rem;
+  height: 1.6rem;
+}
+.hamburger span {
+  height: 0.3rem;
+  width: 100%;
+  background-color: white;
+  border-radius: 0.2rem;
+}
+@media (max-width: 700px) {
+  .project-name {
+    padding: 15px 5%;
+  }
+  .header {
+    background-color: #2d55fb;
+  }
+  .navbar {
+    padding: 25px 5%;
+
+    flex-direction: column;
+  }
+  .navbar > .open-navbar {
+    display: flex;
+  }
+  .navbar .display-button {
+    display: block;
+    margin-top: 10px;
+  }
+  .nav-links {
+    margin-top: 40px;
+    flex-direction: column;
+    display: none;
+  }
+  .nav-links a {
+    height: 50px;
+    padding-left: 5px;
+    line-height: 50px;
+    background-image: linear-gradient(
+      90deg,
+      rgba(165, 215, 232, 0.42) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 0 100%;
+    background-repeat: no-repeat;
+    transition: 0.4s;
+  }
+  .nav-links a:hover {
+    background-size: 100% 100%;
+  }
+  .hamburger {
+    display: flex;
+  }
+  .navbar button {
+    height: 50px;
+    width: 100%;
+    display: none;
+  }
+}

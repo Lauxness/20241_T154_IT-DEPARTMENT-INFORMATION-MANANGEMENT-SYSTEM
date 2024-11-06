@@ -1,0 +1,30 @@
+[
+  {
+    "title": "HTML",
+    "imageSrc": "programs/html.png"
+  },
+  {
+    "title": "CSS",
+    "imageSrc": "programs/css.png"
+  },
+  {
+    "title": "React",
+    "imageSrc": "programs/react.png"
+  },
+  {
+    "title": "NodeJs",
+    "imageSrc": "programs/node.png"
+  },
+  {
+    "title": "Photoshop",
+    "imageSrc": "programs/photoshop.png"
+  },
+  {
+    "title": "MongoDB",
+    "imageSrc": "programs/mongodb.png"
+  },
+  {
+    "title": "Figma",
+    "imageSrc": "programs/figma.png"
+  }
+]
