@@ -29,7 +29,13 @@ const studentSchema = new Schema(
     },
     status: {
       type: String,
+      enum: ["Complete", "Incomplete"],
+      default: "Incomplete",
       required: true,
+    },
+    requirements: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "StudentRequirement",
     },
   },
   { timestamps: true }
