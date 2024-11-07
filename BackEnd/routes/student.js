@@ -5,7 +5,7 @@ const {
   getAllStudents,
   selectStudent,
   updateStudent,
-  archiveStudent,
+  deleteStudent,
 } = require("../services/studentServices");
 
 router.get("/", (req, res) => {
@@ -18,7 +18,7 @@ router.patch("/:id", (req, res) => {
   updateStudent(req, res);
 });
 router.delete("/:id", (req, res) => {
-  archiveStudent(req, res);
+  deleteStudent(req, res);
 });
 router.use("/requirements", requirementsRoute);
 

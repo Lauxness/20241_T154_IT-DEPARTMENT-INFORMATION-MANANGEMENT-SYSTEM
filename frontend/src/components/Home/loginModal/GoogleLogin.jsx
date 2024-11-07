@@ -11,7 +11,7 @@ function GoogleLogin(props) {
       icon: "error",
       title: "Oops...",
       text: error,
-      confirm: confirm(),
+      preConfirm: confirm(),
     });
   };
   const confirm = () => {

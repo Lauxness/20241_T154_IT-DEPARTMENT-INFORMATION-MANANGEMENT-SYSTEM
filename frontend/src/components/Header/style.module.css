@@ -1,0 +1,69 @@
+.heading {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  transition: 0.5s;
+  right: 0;
+  background-color: #2d55fb;
+}
+.projectName {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+}
+.projectName p {
+  font-size: 1.3em;
+  font-weight: 500;
+  color: white;
+}
+
+@media (max-width: 700px) {
+  .header {
+    background-color: #2d55fb;
+  }
+  .navbar {
+    padding: 25px 5%;
+
+    flex-direction: column;
+  }
+  .navbar > .open-navbar {
+    display: flex;
+  }
+  .navbar .display-button {
+    display: block;
+    margin-top: 10px;
+  }
+  .nav-links {
+    margin-top: 40px;
+    flex-direction: column;
+    display: none;
+  }
+  .nav-links a {
+    height: 50px;
+    padding-left: 5px;
+    line-height: 50px;
+    background-image: linear-gradient(
+      90deg,
+      rgba(165, 215, 232, 0.42) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 0 100%;
+    background-repeat: no-repeat;
+    transition: 0.4s;
+  }
+  .nav-links a:hover {
+    background-size: 100% 100%;
+  }
+  .hamburger {
+    display: flex;
+  }
+  .navbar button {
+    height: 50px;
+    width: 100%;
+    display: none;
+  }
+}
