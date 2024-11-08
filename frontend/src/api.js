@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const userInfo = JSON.parse(localStorage.getItem("user-info"));
 const token = userInfo?.token;
 
@@ -13,4 +14,5 @@ export const googleAuth = (code) => api.get(`/index/login/oauth?code=${code}`);
 export const getAllStudents = () => api.get("/home/");
 export const getStudent = (id) => api.get(`/students/${id}`);
 export const deleteStudent = (id) => api.delete(`/students/${id}`);
-export const addStudent = () => api.post(`/home/students/add`);
+export const addStudent = (studentData) =>
+  api.post(`/home/students/add`, studentData);

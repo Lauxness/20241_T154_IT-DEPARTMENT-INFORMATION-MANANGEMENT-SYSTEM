@@ -1,0 +1,94 @@
+.popUpContainer {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  z-index: 7;
+  background-color: rgba(0, 0, 0, 0.304);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.popUpInner {
+  background-color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  border-radius: 2px;
+  animation-name: popup;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px 30px;
+  border-bottom: 1px solid gray;
+}
+.title {
+  font-size: 20px;
+  font-weight: 500;
+}
+.form {
+  height: 100%;
+  width: 100%;
+  padding: 30px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.inputGroup {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.label {
+  font-size: 15px;
+  width: 160px;
+  text-align: start;
+}
+.input {
+  width: 100%;
+  height: 40px;
+  outline: none;
+  font-size: 16px;
+  border-radius: 2px;
+  font-family: poppins;
+  padding: 0px 8px;
+  border: none;
+  border: 1px solid rgb(228, 228, 228);
+}
+.input:hover {
+  box-shadow: 0px 1px 2px rgba(141, 192, 247, 10);
+}
+.submitButton {
+  margin-top: 30px;
+  height: 40px;
+  width: 100%;
+  border-radius: 4px;
+  border: none;
+  background-color: #2d55fb;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+.closeButton {
+  height: 40px;
+  width: 60px;
+  border-radius: 4px;
+  border: none;
+  background-color: #f44960;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}

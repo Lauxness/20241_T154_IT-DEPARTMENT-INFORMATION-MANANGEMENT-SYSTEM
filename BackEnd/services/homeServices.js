@@ -5,13 +5,20 @@ const homePage = async (req, res) => {
 };
 const addStudent = async (req, res) => {
   const newStudent = req.body;
+  console.log(newStudent);
   const { studentId, studentName } = newStudent;
-  const existingStudent = await Students.findOne({ studentId });
-  if (!existingStudent) {
-    const addedStudent = await Students.create(newStudent);
-    res.status(201).json(addedStudent);
-  } else {
-    res.status(407).json({ message: "Student already Exist" });
+  try {
+    const existingStudent = await Students.findOne({ studentId });
+    if (!existingStudent) {
+      const addedStudent = await Students.create(newStudent);
+      console.log(addedStudent);
+      res.status(201).json(addedStudent);
+    } else {
+      res.status(409).json({ message: "Student already Exist" });
+      console.log("conflict");
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 const searchStudent = (req, res) => {
