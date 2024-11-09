@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   MdLogout,
   MdNotificationImportant,
@@ -9,27 +9,32 @@ import {
   MdSettingsBrightness,
   MdQuestionMark,
 } from "react-icons/md";
+
 function SidebarComponent() {
+  const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
+
   const handleLogout = () => {
     localStorage.removeItem("user-info");
     navigate("/");
   };
-  const [collapsed, setCollapsed] = React.useState(false);
+
   return (
     <Sidebar width="300px" collapsed={collapsed}>
       <Menu
         menuItemStyles={{
-          button: ({ level, active, disabled }) => {
-            if (level === 0)
+          button: ({ level, active }) => {
+            if (level === 0) {
               return {
-                backgroundColor: active ? "#e7e7e7" : undefined,
+                borderRight: active ? "3px solid blue" : undefined,
               };
+            }
           },
         }}
       >
         <MenuItem
           active
-          component={<Link to="/" />}
+          component={<Link to="/students" />}
           icon={<MdPerson3 color="#2d55fb" fontSize="20px" />}
         >
           Students
@@ -38,19 +43,20 @@ function SidebarComponent() {
           label="Dashboard"
           icon={<MdStackedBarChart color="#2d55fb" fontSize="20px" />}
         >
-          <MenuItem component={<Link to="/" />}>Chart</MenuItem>
-          <MenuItem component={<Link to="/" />}>Generate Report</MenuItem>
-          <MenuItem component={<Link to="/" />}>Chart</MenuItem>
+          <MenuItem component={<Link to="/dashboard/chart" />}>Chart</MenuItem>
+          <MenuItem component={<Link to="/dashboard/report" />}>
+            Generate Report
+          </MenuItem>
+          <MenuItem component={<Link to="/dashboard/chart2" />}>Chart</MenuItem>
         </SubMenu>
-
         <MenuItem
-          component={<Link to="/" />}
+          component={<Link to="/announcements" />}
           icon={<MdNotificationImportant color="#2d55fb" fontSize="20px" />}
         >
           Announcements
         </MenuItem>
         <MenuItem
-          component={<Link to="/" />}
+          component={<Link to="/notifications" />}
           icon={<MdNotificationImportant color="#2d55fb" fontSize="20px" />}
         >
           Notifications
@@ -63,13 +69,13 @@ function SidebarComponent() {
           <MenuItem>Light theme</MenuItem>
         </SubMenu>
         <MenuItem
-          component={<Link to="/" />}
+          component={<Link to="/faq" />}
           icon={<MdQuestionMark color="#2d55fb" fontSize="20px" />}
         >
-          FaQ
+          FAQ
         </MenuItem>
         <MenuItem
-          onClick={() => handleLogout()}
+          onClick={handleLogout}
           icon={<MdLogout color="#2d55fb" fontSize="20px" />}
         >
           Logout
@@ -78,4 +84,5 @@ function SidebarComponent() {
     </Sidebar>
   );
 }
+
 export default SidebarComponent;

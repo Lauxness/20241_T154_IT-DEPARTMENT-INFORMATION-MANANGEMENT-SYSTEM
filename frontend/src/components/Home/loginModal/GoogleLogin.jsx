@@ -16,6 +16,8 @@ function GoogleLogin(props) {
   };
   const confirm = () => {
     props.triggerLogin();
+    localStorage.removeItem("_grecaptcha");
+    props.captchaCheck();
     navigate("/");
   };
   const responseGoogle = async (authResult) => {

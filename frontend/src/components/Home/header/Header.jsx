@@ -54,7 +54,7 @@ function Header() {
           </div>
           <button
             className={dispayNavbar ? "display-button" : ""}
-            onClick={triggerLogin}
+            onClick={() => triggerLogin()}
           >
             Login now
           </button>

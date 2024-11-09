@@ -12,10 +12,21 @@ function LoginModal(props) {
 
   const GoogleWrapper = (props) => (
     <GoogleOAuthProvider clientId="987401663151-s63q8ec4lvupoqjmman8l6v4g3da05jo.apps.googleusercontent.com">
-      <GoogleLogin triggerLogin={props.triggerLogin} />
+      <GoogleLogin
+        triggerLogin={props.triggerLogin}
+        captchaCheck={captchaCheck}
+      />
     </GoogleOAuthProvider>
   );
-
+  const captchaCheck = () => {
+    if (captchaVerified) {
+      setCaptchaVerified(false);
+      console.log("asdfasdf");
+    } else {
+      setCaptchaVerified(true);
+      console.log("asdfasdf");
+    }
+  };
   const updateCaptcha = (val) => {
     setCaptcha(val);
   };
@@ -36,10 +47,10 @@ function LoginModal(props) {
       console.log(data);
       if (data.success) {
         setMessage("");
-        setCaptchaVerified(true);
+        captchaCheck();
       } else {
         setMessage(data.msg);
-        setCaptchaVerified(false);
+        captchaCheck();
       }
     } catch (error) {
       console.error("Captcha verification failed:", error);
@@ -48,12 +59,12 @@ function LoginModal(props) {
   };
 
   return props.trigger ? (
-    <div className="pop-up-container">
-      <div className="pop-up-inner">
+    <div className="pop-up-container" onClick={() => props.triggerTask()}>
+      <div className="pop-up-inner" onClick={(e) => e.stopPropagation()}>
         <h2>Sign in with Google</h2>
         <ReCAPTCHA
           sitekey="6LcjQm0qAAAAADIuGQVgIIlFR_rtgpm0dcad97ly"
-          onChange={continueWithGoogle} // Directly use `continueWithGoogle`
+          onChange={continueWithGoogle}
         />
         <div>{message}</div>
         {captchaVerified && <GoogleWrapper triggerLogin={props.triggerTask} />}
@@ -61,5 +72,4 @@ function LoginModal(props) {
     </div>
   ) : null;
 }
-
 export default LoginModal;
