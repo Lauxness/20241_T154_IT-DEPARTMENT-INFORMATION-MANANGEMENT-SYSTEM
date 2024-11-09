@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./style.module.css";
-import { addStudent } from "../../api";
+import { addStudent, updateStudent } from "../../api";
 import Swal from "sweetalert2";
+
 function Modal(props) {
   const [studentId, setStudentId] = useState("");
   const [studentName, setStudentName] = useState("");
@@ -10,42 +11,26 @@ function Modal(props) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [program, setProgram] = useState("");
 
-  const handleStudentName = (e) => setStudentName(e.target.value);
-  const handleStudentId = (e) => setStudentId(e.target.value);
-  const handleYear = (e) => setYear(e.target.value);
-  const handleEmail = (e) => setEmail(e.target.value);
-  const handlePhoneNumber = (e) => setPhoneNumber(e.target.value);
-  const handleProgram = (e) => setProgram(e.target.value);
-
-  const showSwal = (success, message) => {
-    console.log(success);
-    if (!success) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: message,
-      });
-    } else {
-      Swal.fire({
-        icon: "success",
-        title: "Your work has been saved",
-        showConfirmButton: true,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.reload();
-        }
-      });
+  useEffect(() => {
+    if (props.trigger) {
+      setStudentId(props.initialStudentData.studentId || "");
+      setStudentName(props.initialStudentData.studentName || "");
+      setYear(props.initialStudentData.year || "");
+      setEmail(props.initialStudentData.email || "");
+      setPhoneNumber(props.initialStudentData.phoneNumber || "");
+      setProgram(props.initialStudentData.program || "");
     }
+  }, [props.trigger, props.initialStudentData]);
+
+  const handleClose = () => {
+    props.triggerModal();
+    props.setInitialStudentData(null);
+    console.log(props.initialStudentData);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setStudentName("");
-    setStudentId("");
-    setYear("");
-    setEmail("");
-    setPhoneNumber("");
-    setProgram("");
     const newStudent = {
       studentId,
       studentName,
@@ -56,28 +41,62 @@ function Modal(props) {
     };
 
     try {
-      const response = await addStudent(newStudent);
+      let response;
 
-      if (response.status === 201) {
-        console.log("Student added successfully");
+      if (props.initialStudentData.studentId) {
+        // Update existing student
+        response = await updateStudent(
+          newStudent,
+          props.initialStudentData._id
+        );
 
-        props.triggerModal();
-        showSwal(true, "Student Added Successfully");
-      } else if (response.status === 409) {
-        props.triggerModal();
-        showSwal(false, "Student Already Exists");
+        if (response.status === 200) {
+          handleClose();
+          showSwal(true, response.data.message);
+        } else if (response.status === 409) {
+          showSwal(false, "Student Already Exists");
+        } else {
+          showSwal(false, "Failed to update Student");
+        }
       } else {
-        showSwal(false, "Failed to add Student");
+        // Add new student
+        response = await addStudent(newStudent);
+
+        if (response.status === 201) {
+          handleClose();
+          showSwal(true, "Student Added Successfully");
+        } else if (response.status === 409) {
+          showSwal(false, "Student Already Exists");
+        } else {
+          showSwal(false, "Failed to add Student");
+        }
       }
     } catch (error) {
-      if (error.response && error.response.status === 409) {
-        props.triggerModal();
-        showSwal(false, "Student Already Exists");
-      } else {
-        console.error("Failed to add student:", error);
-        props.triggerModal();
-        showSwal(false, "Failed to add Student");
-      }
+      console.error("Error:", error);
+      showSwal(
+        false,
+        error.response?.data?.message || "Failed to save Student"
+      );
+    }
+  };
+
+  const showSwal = (success, message) => {
+    if (success) {
+      Swal.fire({
+        icon: "success",
+        title: message,
+        showConfirmButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.reload();
+        }
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: message,
+      });
     }
   };
 
@@ -85,11 +104,12 @@ function Modal(props) {
     <div className={styles.popUpContainer}>
       <div className={styles.popUpInner}>
         <div className={styles.header}>
-          <p className={styles.title}>Add Student</p>
-          <button
-            className={styles.closeButton}
-            onClick={() => props.triggerModal()}
-          >
+          <p className={styles.title}>
+            {props.initialStudentData.studentId
+              ? "Edit Student"
+              : "Add Student"}
+          </p>
+          <button className={styles.closeButton} onClick={handleClose}>
             Close
           </button>
         </div>
@@ -101,7 +121,7 @@ function Modal(props) {
               required
               className={styles.input}
               value={studentId}
-              onChange={handleStudentId}
+              onChange={(e) => setStudentId(e.target.value)}
             />
           </div>
           <div className={styles.inputGroup}>
@@ -111,7 +131,7 @@ function Modal(props) {
               required
               className={styles.input}
               value={studentName}
-              onChange={handleStudentName}
+              onChange={(e) => setStudentName(e.target.value)}
             />
           </div>
           <div className={styles.inputGroup}>
@@ -121,7 +141,7 @@ function Modal(props) {
               required
               className={styles.input}
               value={email}
-              onChange={handleEmail}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className={styles.inputGroup}>
@@ -131,7 +151,7 @@ function Modal(props) {
               required
               className={styles.input}
               value={phoneNumber}
-              onChange={handlePhoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
             />
           </div>
           <div className={styles.inputGroup}>
@@ -139,7 +159,7 @@ function Modal(props) {
             <select
               className={styles.input}
               value={program}
-              onChange={handleProgram}
+              onChange={(e) => setProgram(e.target.value)}
             >
               <option value="">Select program</option>
               <option value="BSIT">BSIT</option>
@@ -148,7 +168,11 @@ function Modal(props) {
           </div>
           <div className={styles.inputGroup}>
             <label className={styles.label}>Year: </label>
-            <select className={styles.input} value={year} onChange={handleYear}>
+            <select
+              className={styles.input}
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+            >
               <option value="">Select year</option>
               <option value="1st Year">1st Year</option>
               <option value="2nd Year">2nd Year</option>

@@ -29,7 +29,6 @@ const accountSchema = new Schema(
     },
     assignedYear: {
       type: String,
-      required: true,
     },
   },
   { timestamps: true }

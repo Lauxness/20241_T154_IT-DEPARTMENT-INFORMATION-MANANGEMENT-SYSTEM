@@ -10,7 +10,7 @@ import {
   MdQuestionMark,
 } from "react-icons/md";
 
-function SidebarComponent() {
+function SidebarComponent(props) {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
 
@@ -26,7 +26,10 @@ function SidebarComponent() {
           button: ({ level, active }) => {
             if (level === 0) {
               return {
-                borderRight: active ? "3px solid blue" : undefined,
+                borderRight: active ? " 3px solid #2d55fb" : "",
+                backgroundImage: active
+                  ? "linear-gradient(to left,rgba(45, 85, 251, 0.3),rgba(45, 85, 251, 0) )"
+                  : undefined,
               };
             }
           },
@@ -47,7 +50,11 @@ function SidebarComponent() {
           <MenuItem component={<Link to="/dashboard/report" />}>
             Generate Report
           </MenuItem>
-          <MenuItem component={<Link to="/dashboard/chart2" />}>Chart</MenuItem>
+          {props.userInfo.role === "admin" ? (
+            <MenuItem component={<Link to="/dashboard/report" />}>
+              Enrollment Officers
+            </MenuItem>
+          ) : null}
         </SubMenu>
         <MenuItem
           component={<Link to="/announcements" />}

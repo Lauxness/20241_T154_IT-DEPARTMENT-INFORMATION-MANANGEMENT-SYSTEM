@@ -22,7 +22,7 @@ const PORT = process.env.PORT;
 //landing and login
 app.use("/index", landingRoute);
 //home
-app.use("/home", homeRoute);
+app.use("/home", Authorization, homeRoute);
 //search and view,delete,update and add student info
 app.use("/students", Authorization, studentRoute);
 //notifications
@@ -30,7 +30,7 @@ app.use("/notification", Authorization, notificationRoute);
 //message student
 app.use("/message", Authorization, messageStudentRoute);
 //dashboard
-app.use("/dashboard", Authorization, dashboardRoute);
+app.use("/dashboard", dashboardRoute);
 //google
 
 //mongodb connection

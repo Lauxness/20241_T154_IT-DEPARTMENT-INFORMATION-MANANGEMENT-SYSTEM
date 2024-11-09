@@ -14,6 +14,7 @@ function Home() {
   const [students, setStudents] = useState([]);
   const [searchForStudent, setsearchForStudent] = useState([]);
   const [trigger, setTrigger] = useState(false);
+  const [initialStudentData, setInitialStudentData] = useState("");
   const fetchStudents = async () => {
     try {
       const response = await getAllStudents();
@@ -28,6 +29,7 @@ function Home() {
   const handleTrigger = () => {
     if (trigger) {
       setTrigger(false);
+      setInitialStudentData(null);
     } else {
       setTrigger(true);
     }
@@ -79,7 +81,8 @@ function Home() {
   };
 
   const handleEdit = (data) => {
-    navigate(`/edit-student/${data._id}`);
+    setInitialStudentData(data);
+    handleTrigger();
   };
 
   const columns = [
@@ -161,10 +164,15 @@ function Home() {
 
   return (
     <>
-      <Modal trigger={trigger} triggerModal={setTrigger}></Modal>
+      <Modal
+        trigger={trigger}
+        triggerModal={setTrigger}
+        initialStudentData={initialStudentData || {}}
+        setInitialStudentData={setInitialStudentData}
+      />
       <Header />
       <div style={containerStyle}>
-        <SidebarComponent />
+        <SidebarComponent userInfo={userInfo} />
         <div
           style={{
             width: "100%",
@@ -231,7 +239,9 @@ function Home() {
               }}
             >
               <div style={{ textAlign: "end", fontSize: "12px" }}>
-                <p>{userInfo?.name || "Guest"}</p>
+                <p>
+                  {userInfo?.role || "Guest"} , {userInfo?.name || "Guest"}
+                </p>
                 <p>{userInfo?.emailAddress || "No email available"}</p>
               </div>
               <div style={{ padding: "0", height: "40px" }}>
