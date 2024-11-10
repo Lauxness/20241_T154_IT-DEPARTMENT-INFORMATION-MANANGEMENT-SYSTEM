@@ -160,6 +160,7 @@ function Home() {
     display: "flex",
     height: "calc(100vh - 71px)",
     width: "100%",
+    overflow: "hidden",
   };
 
   return (
@@ -259,6 +260,9 @@ function Home() {
             data={searchForStudent}
             fixedHeader
             pagination
+            highlightOnHover
+            pointerOnHover
+            alternate
           />
         </div>
       </div>

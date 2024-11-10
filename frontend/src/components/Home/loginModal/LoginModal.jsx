@@ -57,9 +57,12 @@ function LoginModal(props) {
       setMessage("Captcha verification failed. Please try again.");
     }
   };
-
+  const handleModalClose = () => {
+    setCaptchaVerified(false);
+    props.triggerTask();
+  };
   return props.trigger ? (
-    <div className="pop-up-container" onClick={() => props.triggerTask()}>
+    <div className="pop-up-container" onClick={() => handleModalClose()}>
       <div className="pop-up-inner" onClick={(e) => e.stopPropagation()}>
         <h2>Sign in with Google</h2>
         <ReCAPTCHA
