@@ -2,30 +2,38 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { getAllStudents, deleteStudent } from "../api";
-import DataTable, { Alignment } from "react-data-table-component";
+import DataTable from "react-data-table-component";
 import Header from "../components/Header/Header";
 import SidebarComponent from "../components/Sidebar/sideBar";
 import SearchBar from "material-ui-search-bar";
 import { MdEditSquare, MdDeleteForever } from "react-icons/md";
 import Modal from "../components/Modal/modal";
+
 function Home() {
   const [userInfo, setUserInfo] = useState({});
-  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
-  const [searchForStudent, setsearchForStudent] = useState([]);
+  const [searchForStudent, setSearchForStudent] = useState([]);
   const [trigger, setTrigger] = useState(false);
-  const [initialStudentData, setInitialStudentData] = useState("");
+  const [initialStudentData, setInitialStudentData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
   const fetchStudents = async () => {
+    const data = localStorage.getItem("user-info");
+    const userData = JSON.parse(data);
+    setUserInfo(userData);
     try {
       const response = await getAllStudents();
-      console.log(response.data);
       const data = response.data;
       setStudents(data);
-      setsearchForStudent(data);
+      setSearchForStudent(data);
     } catch (error) {
-      console.error("Failed to fetch students:", error);
+      showSwalTokenExp();
+    } finally {
+      setLoading(false);
     }
   };
+
   const handleTrigger = () => {
     if (trigger) {
       setTrigger(false);
@@ -34,31 +42,43 @@ function Home() {
       setTrigger(true);
     }
   };
-  const showSwal = (data) => {
+
+  const showSwalTokenExp = () => {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Your token has expired, Please login again",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("user-info");
+        navigate("/");
+      }
+    });
+  };
+
+  const showSwal = async (data) => {
     Swal.fire({
       title: "Are you sure you want to Delete?",
-      icon: "question",
+      icon: "warning",
       confirmButtonText: "Confirm",
       cancelButtonText: "Cancel",
       showCancelButton: true,
       showCloseButton: true,
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        handleDelete(data);
-        Swal.fire("Deleted!", "", "success");
+        const isDeleted = await handleDelete(data);
+        if (isDeleted) {
+          Swal.fire("Deleted!", "", "success");
+        } else {
+          showSwalTokenExp();
+        }
       }
     });
   };
-  useEffect(() => {
-    const data = localStorage.getItem("user-info");
-    const userData = JSON.parse(data);
-    fetchStudents();
-    console.log("userData", userData);
-    setUserInfo(userData || {}); // Ensure userInfo is always an object
-  }, []);
 
-  console.log("Students", searchForStudent);
+  useEffect(() => {
+    fetchStudents();
+  }, []); // Empty dependency array ensures this runs only once on mount.
 
   const handleDelete = async (data) => {
     const id = data._id;
@@ -68,15 +88,17 @@ function Home() {
         setStudents((prevStudents) =>
           prevStudents.filter((student) => student._id !== id)
         );
-        setsearchForStudent((prevStudents) =>
+        setSearchForStudent((prevStudents) =>
           prevStudents.filter((student) => student._id !== id)
         );
-        console.log("Student deleted successfully:", response.data);
+        return true;
       } else {
         console.error("Failed to delete student:", response);
+        return false;
       }
     } catch (error) {
       console.error("Error deleting student:", error);
+      return false;
     }
   };
 
@@ -96,7 +118,7 @@ function Home() {
       name: "Actions",
       align: "center",
       button: true,
-      cell: (data, index) => (
+      cell: (data) => (
         <div
           style={{
             display: "flex",
@@ -137,10 +159,8 @@ function Home() {
   ];
 
   const searchHandler = (e) => {
-    console.log(e);
-
     if (e === "") {
-      setsearchForStudent(students);
+      setSearchForStudent(students);
       return;
     }
 
@@ -152,8 +172,7 @@ function Home() {
       }
     });
 
-    console.log(filteredData);
-    setsearchForStudent(filteredData);
+    setSearchForStudent(filteredData);
   };
 
   const containerStyle = {
@@ -228,7 +247,6 @@ function Home() {
                 }}
               />
             </div>
-
             <div
               style={{
                 width: "300px",
@@ -255,15 +273,19 @@ function Home() {
               </div>
             </div>
           </div>
-          <DataTable
-            columns={columns}
-            data={searchForStudent}
-            fixedHeader
-            pagination
-            highlightOnHover
-            pointerOnHover
-            alternate
-          />
+          {loading ? (
+            <div>Loading students...</div>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={searchForStudent}
+              fixedHeader
+              pagination
+              highlightOnHover
+              pointerOnHover
+              alternate
+            />
+          )}
         </div>
       </div>
     </>

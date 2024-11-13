@@ -17,7 +17,7 @@ const updateStudent = async (req, res) => {
     if (!updatedStudent) {
       return res.status(404).json({ message: "Student not found" });
     }
-    // Send success response with updated student data
+
     res
       .status(200)
       .json({ message: "Student updated successfully", data: updatedStudent });

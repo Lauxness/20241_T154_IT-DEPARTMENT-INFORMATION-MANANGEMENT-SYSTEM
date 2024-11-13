@@ -21,7 +21,7 @@ const Authorization = (req, res, next) => {
     });
   } else {
     console.log("Unauthorized access attempt:", req.originalUrl);
-    res.status(401).json({ message: "Unauthorized. Please log in." });
+    res.status(401).json({ message: "Token expired" });
   }
 };
 

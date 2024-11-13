@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./style.module.css";
 import { addStudent, updateStudent } from "../../api";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 function Modal(props) {
   const [studentId, setStudentId] = useState("");
@@ -10,7 +11,7 @@ function Modal(props) {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [program, setProgram] = useState("");
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (props.trigger) {
       setStudentId(props.initialStudentData.studentId || "");
@@ -95,7 +96,10 @@ function Modal(props) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: message,
+        text: message + ", Please login again.",
+      }).then((result) => {
+        localStorage.removeItem("user-info");
+        navigate("/");
       });
     }
   };
@@ -122,6 +126,8 @@ function Modal(props) {
               className={styles.input}
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
+              maxLength={10}
+              minLength={10}
             />
           </div>
           <div className={styles.inputGroup}>

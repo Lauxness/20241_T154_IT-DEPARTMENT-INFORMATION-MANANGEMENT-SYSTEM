@@ -1,6 +1,5 @@
 const path = require("path");
 const fs = require("fs");
-const { version } = require("os");
 const { OAuth2Client } = require("google-auth-library");
 const dotenv = require("dotenv");
 const { google } = require("googleapis");

@@ -1,67 +1,71 @@
-import React, { useState } from "react";
+import React from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import GoogleButton from "react-google-button";
 import { googleAuth } from "../../../api";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-function GoogleLogin(props) {
+
+function GoogleLogin({ triggerLogin, captchaCheck }) {
   const navigate = useNavigate();
-  const showSwal = (error) => {
+
+  const showSwal = (message) => {
     Swal.fire({
       icon: "error",
       title: "Oops...",
-      text: error,
-      preConfirm: confirm(),
+      text: message,
+    }).then(() => {
+      confirmLogout();
     });
   };
-  const confirm = () => {
-    props.triggerLogin();
-    localStorage.removeItem("_grecaptcha");
-    props.captchaCheck();
+
+  const confirmLogout = () => {
+    triggerLogin();
+    localStorage.removeItem("_grecaptcha"); // Only if necessary
+    captchaCheck();
     navigate("/");
   };
-  const responseGoogle = async (authResult) => {
+
+  const handleGoogleResponse = async ({ code }) => {
+    if (!code) {
+      return showSwal("Google authentication failed");
+    }
+
     try {
-      if (authResult["code"]) {
-        const result = await googleAuth(authResult.code);
-        console.log(result);
-        const { emailAddress, name, profilePicture, role, assignedYear } =
-          result.data.user;
-        const token = result.data.token;
-        const userInfo = {
-          emailAddress,
-          name,
-          token,
-          profilePicture,
-          role,
-          assignedYear,
-        };
-        localStorage.setItem("user-info", JSON.stringify(userInfo));
-        console.log("User Info:", userInfo);
-        navigate("/home");
-      } else {
-        throw new Error("Google authentication failed");
-      }
+      const result = await googleAuth(code);
+      const { emailAddress, name, profilePicture, role, assignedYear } =
+        result.data.user;
+      const token = result.data.token;
+
+      const userInfo = {
+        emailAddress,
+        name,
+        token,
+        profilePicture,
+        role,
+        assignedYear,
+      };
+      localStorage.setItem("user-info", JSON.stringify(userInfo));
+
+      console.log("User Info:", userInfo);
+      navigate("/home");
     } catch (error) {
-      console.error(
-        "Error from server:",
-        error.response ? error.response.data : error.message
-      );
-      showSwal(
-        error.response ? error.response.data.message : "Unexpected error"
-      );
+      const errorMessage = error.response?.data?.message || "Unexpected error";
+      console.error("Error from server:", errorMessage);
+      showSwal(errorMessage);
     }
   };
 
   const googleLogin = useGoogleLogin({
-    onSuccess: responseGoogle,
-    onError: responseGoogle,
+    onSuccess: handleGoogleResponse,
+    onError: () => showSwal("Authentication process failed. Please try again."),
     flow: "auth-code",
   });
+
   return (
     <div>
       <GoogleButton onClick={googleLogin} />
     </div>
   );
 }
+
 export default GoogleLogin;

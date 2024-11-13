@@ -1,15 +1,23 @@
 import axios from "axios";
-
-const userInfo = JSON.parse(localStorage.getItem("user-info"));
-const token = userInfo?.token;
-
 const api = axios.create({
   baseURL: "http://localhost:8000",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
   },
 });
+api.interceptors.request.use(
+  (config) => {
+    const userInfo = JSON.parse(localStorage.getItem("user-info"));
+    const token = userInfo?.token;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 export const googleAuth = (code) => api.get(`/index/login/oauth?code=${code}`);
 export const getAllStudents = () => api.get("/home/");
 export const getStudent = (id) => api.get(`/students/${id}`);
