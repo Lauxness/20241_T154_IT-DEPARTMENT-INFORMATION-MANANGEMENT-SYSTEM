@@ -11,10 +11,7 @@ function LoginModal(props) {
   const [captchaVerified, setCaptchaVerified] = useState(false);
 
   const GoogleWrapper = (props) => (
-    <GoogleOAuthProvider
-      prompt=" "
-      clientId="987401663151-s63q8ec4lvupoqjmman8l6v4g3da05jo.apps.googleusercontent.com"
-    >
+    <GoogleOAuthProvider clientId="987401663151-s63q8ec4lvupoqjmman8l6v4g3da05jo.apps.googleusercontent.com">
       <GoogleLogin
         triggerLogin={props.triggerLogin}
         captchaCheck={captchaCheck}

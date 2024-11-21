@@ -3,7 +3,7 @@ import styles from "./style.module.css";
 import { addStudent, updateStudent } from "../../api";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-
+import OvalLoader from "../loader/OvalLoader";
 function Modal(props) {
   const [studentId, setStudentId] = useState("");
   const [studentName, setStudentName] = useState("");
@@ -11,6 +11,7 @@ function Modal(props) {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [program, setProgram] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     if (props.trigger) {
@@ -43,45 +44,33 @@ function Modal(props) {
 
     try {
       let response;
-
+      setIsLoading(true);
       if (props.initialStudentData.studentId) {
-        // Update existing student
         response = await updateStudent(
           newStudent,
           props.initialStudentData._id
         );
-
         if (response.status === 200) {
           handleClose();
-          showSwal(true, response.data.message);
-        } else if (response.status === 409) {
-          showSwal(false, "Student Already Exists");
-        } else {
-          showSwal(false, "Failed to update Student");
+          setIsLoading(false);
+          showSwal(true, response.data.message, response.status);
         }
       } else {
-        // Add new student
         response = await addStudent(newStudent);
-
         if (response.status === 201) {
           handleClose();
-          showSwal(true, "Student Added Successfully");
-        } else if (response.status === 409) {
-          showSwal(false, "Student Already Exists");
-        } else {
-          showSwal(false, "Failed to add Student");
+          setIsLoading(false);
+          showSwal(true, response.data.message, response.status);
         }
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Error:", error);
-      showSwal(
-        false,
-        error.response?.data?.message || "Failed to save Student"
-      );
+      showSwal(false, error.response.data.message, error.response.status);
     }
   };
 
-  const showSwal = (success, message) => {
+  const showSwal = (success, message, status) => {
     if (success) {
       Swal.fire({
         icon: "success",
@@ -96,16 +85,19 @@ function Modal(props) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: message + ", Please login again.",
+        text: message,
       }).then((result) => {
-        localStorage.removeItem("user-info");
-        navigate("/");
+        if (!success && status === 401) {
+          localStorage.removeItem("user-info");
+          navigate("/");
+        }
       });
     }
   };
 
   return props.trigger ? (
     <div className={styles.popUpContainer}>
+      {isLoading ? <OvalLoader /> : ""}
       <div className={styles.popUpInner}>
         <div className={styles.header}>
           <p className={styles.title}>
@@ -124,7 +116,8 @@ function Modal(props) {
               type="text"
               required
               className={styles.input}
-              value={studentId}
+              disabled={!!props.initialStudentData.studentId}
+              value={studentId || ""}
               onChange={(e) => setStudentId(e.target.value)}
               maxLength={10}
               minLength={10}
