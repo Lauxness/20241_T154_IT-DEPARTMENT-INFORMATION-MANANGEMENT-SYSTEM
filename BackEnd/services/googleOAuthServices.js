@@ -9,7 +9,6 @@ exports.googleAuth = async (req, res, next) => {
     const googleRes = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(googleRes.tokens);
 
-    // Get user info from Google
     const userRes = await axios.get(
       `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
     );
@@ -20,7 +19,6 @@ exports.googleAuth = async (req, res, next) => {
     if (!currentUser) {
       return res.status(404).json({ message: "Account is not Registered" });
     } else {
-      // Update current user information
       currentUser.googleId = id;
       currentUser.name = name;
       currentUser.emailAddress = email;
@@ -30,18 +28,17 @@ exports.googleAuth = async (req, res, next) => {
 
       const updatedUser = await currentUser.save();
 
-      // Define unique JWT payload with user ID
       const userPayload = {
-        id: updatedUser._id, // MongoDB unique user ID
+        id: updatedUser._id,
         googleId: updatedUser.googleId,
         name: updatedUser.name,
         emailAddress: updatedUser.emailAddress,
         profilePicture: updatedUser.profilePicture,
         role: updatedUser.role,
         assignedYear: updatedUser.assignedYear,
+        assignedProgram: updatedUser.assignedProgram,
       };
 
-      // Sign the JWT with the unique user payload
       const token = jwt.sign(userPayload, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_TIMEOUT,
       });

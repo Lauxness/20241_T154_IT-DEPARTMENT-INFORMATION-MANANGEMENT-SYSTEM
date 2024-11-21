@@ -2,10 +2,30 @@ const Student = require("../models/studentModel");
 const getAllStudents = (req, res) => {
   res.send(console.log("get all student"));
 };
-const selectStudent = (req, res) => {
+const selectStudent = async (req, res) => {
   const id = req.params.id;
-  res.send(console.log(id));
+
+  try {
+    const student = await Student.findOneAndUpdate(
+      { _id: id, locked: { $ne: true } },
+      { locked: true },
+      { new: true }
+    ).populate("requirements");
+
+    if (!student) {
+      return res
+        .status(404)
+        .json({ message: "Student not found or currently in use." });
+    }
+
+    console.log(student);
+    res.status(200).json(student);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
 };
+
 const updateStudent = async (req, res) => {
   const id = req.params.id;
   const updatedData = req.body;

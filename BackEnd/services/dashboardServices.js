@@ -4,12 +4,13 @@ const getDashboard = (req, res) => {
 };
 const getEnrollmentOfficer = async (req, res) => {
   try {
-    const officers = await Accounts.find();
+    const officers = await Accounts.find({ role: "officer" });
     res.status(200).json(officers);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
+
 const generateReport = (req, res) => {
   res.send(console.log("Generate Report"));
 };

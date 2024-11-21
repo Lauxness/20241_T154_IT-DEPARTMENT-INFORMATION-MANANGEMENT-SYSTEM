@@ -7,13 +7,19 @@ const {
   viewRequirementImage,
   deleteRequirementImage,
 } = require("../services/studentRequirementServices");
+const multerConfig = require("../utils/multerConfig");
 
 router.get("/", (req, res) => {
   viewRequirements(req, res, "Sample");
 });
-router.get("/upload_image", (req, res) => {
-  uploadImage(req, res);
-});
+router.post(
+  "/upload_image/:id",
+  multerConfig.upload.single("requirement"),
+  (req, res) => {
+    console.log("adsfasfasf");
+    uploadImage(req, res);
+  }
+);
 router.patch("/:id", (req, res) => {
   updateRequirement(req, res);
 });
