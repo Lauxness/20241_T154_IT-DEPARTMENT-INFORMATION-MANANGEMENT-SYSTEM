@@ -1,3 +1,4 @@
+import NotFound from "../assets/404Notfound.png";
 const NotFoundPage = () => {
   const style = {
     display: "flex",
@@ -16,7 +17,8 @@ const NotFoundPage = () => {
     backgroundColor: "#2d55fb",
     fontSize: "1em",
     border: "none",
-    borderRadius: "5px",
+    outline: "none",
+    borderRadius: "2px",
   };
   const navigate = () => {
     window.location.href = "http://localhost:5173/";
@@ -24,7 +26,8 @@ const NotFoundPage = () => {
   return (
     <>
       <div style={style}>
-        <h1>404 Page Not Found</h1>
+        <img src={NotFound} alt="illustration" />
+        <h2>Page Not Found</h2>
         <button style={buttonStyle} onClick={navigate}>
           Back
         </button>

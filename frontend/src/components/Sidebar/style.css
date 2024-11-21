@@ -1,0 +1,8 @@
+/* SidebarComponent.css */
+.sidebar-menu-item:hover {
+  background-color: rgba(45, 85, 251, 1);
+}
+
+.sidebar-submenu .sidebar-menu-item:hover {
+  background-color: rgba(45, 85, 251, 0.1);
+}

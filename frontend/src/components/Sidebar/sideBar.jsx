@@ -9,65 +9,104 @@ import {
   MdSettingsBrightness,
   MdQuestionMark,
 } from "react-icons/md";
+import "./style.css";
+import Swal from "sweetalert2";
 
 function SidebarComponent(props) {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-
+  const showSwal = () => {
+    Swal.fire({
+      icon: "warning",
+      text: "Are you sure you want to Logout?",
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Cancel",
+      showCancelButton: true,
+      showCloseButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleLogout();
+      }
+    });
+  };
   const handleLogout = () => {
     localStorage.removeItem("user-info");
     navigate("/");
   };
-
+  console.log(props.currentPage);
   return (
     <Sidebar width="300px" collapsed={collapsed}>
       <Menu
         menuItemStyles={{
           button: ({ level, active }) => {
-            if (level === 0) {
+            if (level === 1 || level === 0) {
               return {
-                borderRight: active ? " 3px solid #2d55fb" : "",
-                backgroundImage: active
-                  ? "linear-gradient(to left,rgba(45, 85, 251, 0.3),rgba(45, 85, 251, 0) )"
-                  : undefined,
+                borderRight: active && level === 0 ? " 3px solid #2d55fb" : "",
+                backgroundColor:
+                  active || (active && level === 1)
+                    ? "rgba(45, 85, 251, 0.2 )"
+                    : undefined,
               };
             }
           },
         }}
       >
         <MenuItem
-          active
-          component={<Link to="/students" />}
+          active={props.currentPage === "home"}
+          component={<Link to="/home" />}
           icon={<MdPerson3 color="#2d55fb" fontSize="20px" />}
         >
           Students
         </MenuItem>
         <SubMenu
+          active={
+            props.currentPage === "enrollmentOfficers" ||
+            props.currentPage === "chart" ||
+            props.currentPage === "generate_report"
+          }
+          defaultOpen={props.currentPage === "enrollmentOfficers"}
           label="Dashboard"
           icon={<MdStackedBarChart color="#2d55fb" fontSize="20px" />}
         >
-          <MenuItem component={<Link to="/dashboard/chart" />}>Chart</MenuItem>
-          <MenuItem component={<Link to="/dashboard/report" />}>
+          <MenuItem
+            active={props.currentPage === "chart"}
+            component={<Link to="/dashboard" />}
+          >
+            Chart
+          </MenuItem>
+          <MenuItem
+            active={props.currentPage === "generate_report"}
+            component={<Link to="/dashboard/report" />}
+          >
             Generate Report
           </MenuItem>
+
           {props.userInfo.role === "admin" ? (
-            <MenuItem component={<Link to="/dashboard/report" />}>
+            <MenuItem
+              component={<Link to="/enrollment_officers" />}
+              active={props.currentPage === "enrollmentOfficers"}
+            >
               Enrollment Officers
             </MenuItem>
           ) : null}
         </SubMenu>
+
         <MenuItem
+          active={props.currentPage === "announcements"}
           component={<Link to="/announcements" />}
           icon={<MdNotificationImportant color="#2d55fb" fontSize="20px" />}
+          className="sidebar-menu-item"
         >
           Announcements
         </MenuItem>
         <MenuItem
+          active={props.currentPage === "notifications"}
           component={<Link to="/notifications" />}
           icon={<MdNotificationImportant color="#2d55fb" fontSize="20px" />}
         >
           Notifications
         </MenuItem>
+
         <SubMenu
           label="Theme"
           icon={<MdSettingsBrightness color="#2d55fb" fontSize="20px" />}
@@ -75,14 +114,17 @@ function SidebarComponent(props) {
           <MenuItem>Dark theme</MenuItem>
           <MenuItem>Light theme</MenuItem>
         </SubMenu>
+
         <MenuItem
+          active={props.currentPage === "faq"}
           component={<Link to="/faq" />}
           icon={<MdQuestionMark color="#2d55fb" fontSize="20px" />}
         >
           FAQ
         </MenuItem>
+
         <MenuItem
-          onClick={handleLogout}
+          onClick={showSwal}
           icon={<MdLogout color="#2d55fb" fontSize="20px" />}
         >
           Logout

@@ -1,37 +1,38 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { getAllStudents, deleteStudent, getStudent } from "../api";
+import { getAllEnrollmentOfficers, deleteOfficer } from "../api";
 import DataTable from "react-data-table-component";
 import Header from "../components/Header/Header";
 import SidebarComponent from "../components/Sidebar/sideBar";
 import SearchBar from "material-ui-search-bar";
 import { MdEditSquare, MdDeleteForever } from "react-icons/md";
-import Modal from "../components/Modal/modal";
-import RequirementsPopup from "../components/studentProfile/requirementsPopup";
-
+import OfficerModal from "../components/Modal/officerModal";
+import OvalLoader from "../components/loader/OvalLoader";
 function Home() {
   const [userInfo, setUserInfo] = useState({});
-  const [students, setStudents] = useState([]);
-  const [searchForStudent, setSearchForStudent] = useState([]);
+  const [Officers, setOfficers] = useState([]);
+  const [searchForOfficer, setSearchForOfficer] = useState([]);
   const [trigger, setTrigger] = useState(false);
-  const [initialStudentData, setInitialStudentData] = useState(null);
+  const [initialOfficerData, setInitialOfficerData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [triggerRequirements, setTriggerRequirements] = useState(false);
-  const [studentData, setStudentData] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const fetchStudents = async () => {
+  const fetchEnrollmentOfficers = async () => {
     const data = localStorage.getItem("user-info");
     const userData = JSON.parse(data);
     setUserInfo(userData);
     try {
-      const response = await getAllStudents();
-      const data = response.data;
-      setStudents(data);
-      setSearchForStudent(data);
+      const response = await getAllEnrollmentOfficers();
+      if (response.status === 200) {
+        const data = response.data;
+        setOfficers(data);
+        setSearchForOfficer(data);
+      } else if (response.status == 401) {
+        showSwalTokenExp();
+      }
     } catch (error) {
-      showSwalTokenExp();
     } finally {
       setLoading(false);
     }
@@ -40,33 +41,9 @@ function Home() {
   const handleTrigger = () => {
     if (trigger) {
       setTrigger(false);
-      setInitialStudentData(null);
+      setInitialOfficerData(null);
     } else {
       setTrigger(true);
-    }
-  };
-  const getOneStudent = async (studentID) => {
-    console.log(studentID);
-
-    try {
-      const response = await getStudent(studentID);
-      if (response.status === 200) {
-        const studentData = response.data;
-        console.log(studentData.requirements);
-        setStudentData(studentData);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  const handleTriggerRequirements = async (data) => {
-    if (triggerRequirements) {
-      setTriggerRequirements(false);
-      setStudentData(null);
-    } else {
-      console.log("Data is : ", data);
-      await getOneStudent(data._id);
-      setTriggerRequirements(true);
     }
   };
 
@@ -95,7 +72,11 @@ function Home() {
       if (result.isConfirmed) {
         const isDeleted = await handleDelete(data);
         if (isDeleted) {
-          Swal.fire("Deleted!", "", "success");
+          Swal.fire("Deleted!", "", "success").then((result) => {
+            if (result.isConfirmed) {
+              window.location.reload();
+            }
+          });
         } else {
           showSwalTokenExp();
         }
@@ -104,43 +85,66 @@ function Home() {
   };
 
   useEffect(() => {
-    fetchStudents();
+    fetchEnrollmentOfficers();
   }, []);
 
   const handleDelete = async (data) => {
     const id = data._id;
     try {
-      const response = await deleteStudent(id);
+      setIsLoading(true);
+      const response = await deleteOfficer(id);
       if (response.status === 200) {
-        setStudents((prevStudents) =>
-          prevStudents.filter((student) => student._id !== id)
-        );
-        setSearchForStudent((prevStudents) =>
-          prevStudents.filter((student) => student._id !== id)
-        );
+        console.log(response);
         return true;
       } else {
-        console.error("Failed to delete student:", response);
+        console.error("Failed to delete Officer:", response);
         return false;
       }
     } catch (error) {
-      console.error("Error deleting student:", error);
+      console.error("Error deleting Officer:", error);
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleEdit = (data) => {
-    setInitialStudentData(data);
+    setInitialOfficerData(data);
+    console.log(data);
     handleTrigger();
   };
 
   const columns = [
-    { name: "StudentID", selector: (row) => row.studentId, sortable: true },
-    { name: "Name", selector: (row) => row.studentName, sortable: true },
-    { name: "Program", selector: (row) => row.program, sortable: true },
-    { name: "Year", selector: (row) => row.year, sortable: true },
-    { name: "Email", selector: (row) => row.email, sortable: true },
-    { name: "Status", selector: (row) => row.status, sortable: true },
+    { name: "Officer Email", selector: (row) => row.emailAddress },
+    {
+      name: "Name",
+      selector: (row) => row.name || "Waiting to Login for the first time",
+      sortable: true,
+      cell: (data) => (
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {data.profilePicture ? (
+            <img
+              src={data.profilePicture}
+              alt="Profile"
+              style={{ width: "30px", height: "30px", borderRadius: "50%" }}
+            />
+          ) : (
+            ""
+          )}
+          <p>{data.name || "Waiting the first Login"}</p>
+        </div>
+      ),
+    },
+    {
+      name: "Assigned Year",
+      selector: (row) => row.assignedYear || "Not Assigned",
+      sortable: true,
+    },
+    {
+      name: "Assigned Program",
+      selector: (row) => row.assignedProgram || "Not Assigned",
+      sortable: true,
+    },
     {
       name: "Actions",
       align: "center",
@@ -187,19 +191,18 @@ function Home() {
 
   const searchHandler = (e) => {
     if (e === "") {
-      setSearchForStudent(students);
+      setSearchForOfficer(Officers);
       return;
     }
 
-    const filteredData = students.filter((row) => {
+    const filteredData = Officers.filter((row) => {
       if (!isNaN(e)) {
-        return row.studentId.toString().includes(e.toString());
+        return row.emailAddress.toString().includes(e.toString());
       } else {
-        return row.studentName.toLowerCase().includes(e.toLowerCase());
+        return row.emailAddress.toLowerCase().includes(e.toLowerCase());
       }
     });
-
-    setSearchForStudent(filteredData);
+    setSearchForOfficer(filteredData);
   };
 
   const containerStyle = {
@@ -211,20 +214,19 @@ function Home() {
 
   return (
     <>
-      <RequirementsPopup
-        trigger={triggerRequirements}
-        triggerRequirements={handleTriggerRequirements}
-        studentData={studentData}
-      />
-      <Modal
+      {isLoading ? <OvalLoader /> : ""}
+      <OfficerModal
         trigger={trigger}
         triggerModal={setTrigger}
-        initialStudentData={initialStudentData || {}}
-        setInitialStudentData={setInitialStudentData}
+        initialOfficerData={initialOfficerData || {}}
+        setInitialOfficerData={setInitialOfficerData}
       />
       <Header />
       <div style={containerStyle}>
-        <SidebarComponent userInfo={userInfo} currentPage="home" />
+        <SidebarComponent
+          userInfo={userInfo}
+          currentPage="enrollmentOfficers"
+        />
         <div
           style={{
             width: "100%",
@@ -261,7 +263,7 @@ function Home() {
                   fontWeight: "500",
                 }}
               >
-                Students List
+                Enrollment Officers List
               </p>
             </div>
             <div
@@ -322,7 +324,7 @@ function Home() {
                 }}
                 onClick={handleTrigger}
               >
-                Add student
+                Add Officer
               </button>
               <SearchBar
                 onChange={(e) => searchHandler(e)}
@@ -336,16 +338,16 @@ function Home() {
             </div>
           </div>
           {loading ? (
-            <div>Loading students...</div>
+            <div>Loading Officers...</div>
           ) : (
             <DataTable
               columns={columns}
-              data={searchForStudent}
+              data={searchForOfficer}
               fixedHeader
-              onRowClicked={(data) => handleTriggerRequirements(data)}
               pagination
               highlightOnHover
               pointerOnHover
+              alternate
             />
           )}
         </div>

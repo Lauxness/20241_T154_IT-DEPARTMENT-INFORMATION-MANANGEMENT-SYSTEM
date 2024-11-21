@@ -1,0 +1,189 @@
+.popUpContainer {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  z-index: 7;
+  background-color: rgba(0, 0, 0, 0.304);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.popUpInner {
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  height: calc(100% - 20px);
+  padding: 10px;
+  max-width: 1300px;
+  text-align: center;
+  border-radius: 2px;
+  animation-name: popup;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+}
+@keyframes popup {
+  from {
+    transform: translateY(10%);
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.leftSide {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  background-color: #f0f0f0;
+}
+.studentName {
+  font-size: 20px;
+  font-weight: 500;
+}
+.studentName > div:nth-child(1) {
+  background-color: #2d55fb;
+  position: relative;
+  height: 130px;
+  max-width: 500px;
+  margin-bottom: 65px;
+  min-width: 350px;
+}
+.profileContainer {
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background-color: red;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid white;
+  height: 130px;
+  width: 130px;
+}
+.studentInformation {
+  text-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px;
+}
+.studentInformation1 {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.studentInformation1 > p {
+  font-size: 14px;
+  font-weight: light;
+}
+.studentInformation1 > div {
+  display: flex;
+  gap: 5px;
+  font-size: 14px;
+  flex-direction: column;
+  font-weight: 500;
+}
+.button {
+  height: 40px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: poppins;
+  cursor: pointer;
+  margin-top: 50px;
+  background-color: #f44960;
+  color: white;
+}
+.rightSide {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  background-color: #f0f0f0;
+  height: 100%;
+  width: 100%;
+}
+.requirementBody {
+  width: 100%;
+  padding: 10px;
+}
+.header {
+  background-color: #2d55fb;
+  width: 100%;
+  text-align: start;
+  padding: 10px 20px;
+  font-size: 20px;
+  color: white;
+  font-weight: 500;
+}
+.design {
+  height: 130px;
+  background-color: #2d55fb;
+  width: 100%;
+  background-image: url(../../assets/BackgroundImage.png);
+}
+.requirementContainer {
+  display: grid;
+  margin-top: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.requirement {
+  display: flex;
+  height: 145px;
+  width: 100%;
+  justify-content: space-between;
+  gap: 5px;
+  background-color: white;
+  align-items: center;
+}
+.imageContainer {
+  background-color: #d9d9d9;
+  height: 100%;
+  width: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.imageContainer > img {
+  width: 100%;
+}
+.requirementDetails {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+}
+.requirementDetails > div {
+  font-size: 12px;
+  text-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.submitButton {
+  height: 35px;
+  font-family: poppins;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  color: white;
+
+  text-align: center;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+}
