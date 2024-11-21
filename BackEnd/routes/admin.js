@@ -8,7 +8,7 @@ const {
 const router = express.Router();
 
 router.post("/add", async (req, res) => {
-  await addEnrollmentOfficer(req, res);
+  addEnrollmentOfficer(req, res);
 });
 router.delete("/:id", (req, res) => {
   deleteEnrollmentOfficer(req, res);

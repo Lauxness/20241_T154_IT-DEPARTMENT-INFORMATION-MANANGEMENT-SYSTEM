@@ -33,10 +33,12 @@ const studentSchema = new Schema(
       default: "Incomplete",
       required: true,
     },
-    requirements: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "StudentRequirement",
-    },
+    requirements: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "studentRequirement",
+      },
+    ],
   },
   { timestamps: true }
 );

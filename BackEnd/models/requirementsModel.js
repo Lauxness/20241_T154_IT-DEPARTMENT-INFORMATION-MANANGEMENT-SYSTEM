@@ -3,15 +3,36 @@ const Schema = mongoose.Schema;
 
 const studentRequirementSchema = new Schema(
   {
-    name: { type: String, required: true },
-    status: {
+    requirementName: {
       type: String,
-      enum: ["Missing", "Submitted"],
-      default: "Missing",
+      required: true,
     },
-    file: { type: mongoose.Schema.Types.ObjectId, ref: "RequirementsFile" },
+    fileId: {
+      type: String,
+      required: true,
+    },
+    fileDownloadLink: {
+      type: String,
+      required: true,
+    },
+    fileViewLink: {
+      type: String,
+      required: true,
+    },
+    fileName: {
+      type: String,
+      required: true,
+    },
+    fileThumbnailLink: {
+      type: String,
+      required: true,
+    },
+    mimeType: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("StudentRequirement", studentRequirementSchema);
+module.exports = mongoose.model("studentRequirement", studentRequirementSchema);

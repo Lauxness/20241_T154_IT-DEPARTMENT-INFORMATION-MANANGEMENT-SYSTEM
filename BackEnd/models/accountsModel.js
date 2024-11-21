@@ -30,6 +30,9 @@ const accountSchema = new Schema(
     assignedYear: {
       type: String,
     },
+    assignedProgram: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
