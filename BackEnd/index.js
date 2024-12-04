@@ -1,14 +1,14 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const session = require("express-session");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const landingRoute = require("./routes/login");
+const loginRoute = require("./routes/login");
 const homeRoute = require("./routes/home");
 const dashboardRoute = require("./routes/dashboard");
 const messageStudentRoute = require("./routes/messageStudent");
 const notificationRoute = require("./routes/notification");
 const studentRoute = require("./routes/student");
+const activityRoute = require("./routes/activities");
 const { Authorization } = require("./services/AuthorizationServices");
 require("./services/googleOAuthServices");
 
@@ -20,13 +20,15 @@ app.use(cors());
 const PORT = process.env.PORT;
 
 //landing and login
-app.use("/index", landingRoute);
+app.use("/index", loginRoute);
 //home
 app.use("/home", Authorization, homeRoute);
 //search and view,delete,update and add student info
-app.use("/students", studentRoute);
+app.use("/students", Authorization, studentRoute);
 //notifications
-app.use("/notification", Authorization, notificationRoute);
+app.use("/notification", notificationRoute);
+//message student
+app.use("/activity", Authorization, activityRoute);
 //message student
 app.use("/message", Authorization, messageStudentRoute);
 //dashboard

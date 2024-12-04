@@ -4,7 +4,6 @@ const {
   viewRequirements,
   uploadImage,
   updateRequirement,
-  viewRequirementImage,
   deleteRequirementImage,
 } = require("../services/studentRequirementServices");
 const multerConfig = require("../utils/multerConfig");
@@ -20,13 +19,15 @@ router.post(
     uploadImage(req, res);
   }
 );
-router.patch("/:id", (req, res) => {
-  updateRequirement(req, res);
-});
-router.get("/view_image/:name", (req, res) => {
-  viewRequirementImage(req, res);
-});
-router.delete("/remove_image/:name", (req, res) => {
+router.patch(
+  "/:studentId/:reqId",
+  multerConfig.upload.single("requirement"),
+  (req, res) => {
+    updateRequirement(req, res);
+  }
+);
+
+router.delete("/remove_image/:id/:reqId", (req, res) => {
   deleteRequirementImage(req, res);
 });
 

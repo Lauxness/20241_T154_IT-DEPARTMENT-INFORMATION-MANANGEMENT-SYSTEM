@@ -2,10 +2,12 @@ const express = require("express");
 const requirementsRoute = require("./requirements");
 const router = express.Router();
 const {
+  unlock,
+  restoreStudent,
   getAllStudents,
   selectStudent,
   updateStudent,
-  deleteStudent,
+  archiveStudent,
 } = require("../services/studentServices");
 
 router.get("/", (req, res) => {
@@ -18,8 +20,15 @@ router.patch("/:id", (req, res) => {
   updateStudent(req, res);
 });
 router.delete("/:id", (req, res) => {
-  deleteStudent(req, res);
+  archiveStudent(req, res);
 });
+router.patch("/restore/:id", (req, res) => {
+  restoreStudent(req, res);
+});
+router.patch("/unlock/:id", (req, res) => {
+  unlock(req, res);
+});
+
 router.use("/requirements", requirementsRoute);
 
 module.exports = router;

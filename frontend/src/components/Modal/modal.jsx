@@ -24,10 +24,14 @@ function Modal(props) {
     }
   }, [props.trigger, props.initialStudentData]);
 
+  console.log("asdfasdfsadf", props.initialStudentData);
   const handleClose = () => {
-    props.triggerModal();
-    props.setInitialStudentData(null);
-    console.log(props.initialStudentData);
+    if (props.initialStudentData._id !== undefined) {
+      console.log("click");
+      props.handleEdit(props.initialStudentData);
+    } else {
+      props.triggerModal(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -46,6 +50,7 @@ function Modal(props) {
       let response;
       setIsLoading(true);
       if (props.initialStudentData.studentId) {
+        console.log("new student", newStudent);
         response = await updateStudent(
           newStudent,
           props.initialStudentData._id
@@ -56,6 +61,7 @@ function Modal(props) {
           showSwal(true, response.data.message, response.status);
         }
       } else {
+        console.log("add");
         response = await addStudent(newStudent);
         if (response.status === 201) {
           handleClose();
@@ -74,7 +80,7 @@ function Modal(props) {
     if (success) {
       Swal.fire({
         icon: "success",
-        title: message,
+        text: message,
         showConfirmButton: true,
       }).then((result) => {
         if (result.isConfirmed) {
@@ -86,7 +92,7 @@ function Modal(props) {
         icon: "error",
         title: "Oops...",
         text: message,
-      }).then((result) => {
+      }).then(() => {
         if (!success && status === 401) {
           localStorage.removeItem("user-info");
           navigate("/");
@@ -97,7 +103,7 @@ function Modal(props) {
 
   return props.trigger ? (
     <div className={styles.popUpContainer}>
-      {isLoading ? <OvalLoader /> : ""}
+      {isLoading ? <OvalLoader color="rgba(0, 0, 0, 0.304)" /> : ""}
       <div className={styles.popUpInner}>
         <div className={styles.header}>
           <p className={styles.title}>
@@ -117,7 +123,7 @@ function Modal(props) {
               required
               className={styles.input}
               disabled={!!props.initialStudentData.studentId}
-              value={studentId || ""}
+              value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
               maxLength={10}
               minLength={10}

@@ -12,28 +12,41 @@ import Home from "./pages/Home";
 import EnrollmentOfficers from "./pages/EnrollmentOfficers";
 import RefreshHandler from "./handler/RefreshHandler";
 import Dashboard from "./pages/Dashboard";
-
+import ArchivesStudents from "./pages/ArchivesStudents";
+import FaQPage from "./pages/FaQ";
+import ActivityLogs from "./pages/ActivityLogs";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const PrivateRoute = ({ element }) => {
-    const location = useLocation();
-    return isAuthenticated ? element : <Navigate to={location.pathname} />;
+    console.log(isAuthenticated);
+    return isAuthenticated ? element : <Navigate to="/" />;
   };
   return (
     <BrowserRouter>
       <RefreshHandler setIsAuthenticated={setIsAuthenticated} />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/"
+          element={<LandingPage setIsAuthenticated={setIsAuthenticated} />}
+        />
         <Route path="/home" element={<PrivateRoute element={<Home />} />} />
         <Route
           path="/dashboard"
           element={<PrivateRoute element={<Dashboard />} />}
         />
-
         <Route
           path="/enrollment_officers"
           element={<PrivateRoute element={<EnrollmentOfficers />} />}
         />
+        <Route
+          path="/archived_students"
+          element={<PrivateRoute element={<ArchivesStudents />} />}
+        />
+        <Route
+          path="/activity_logs"
+          element={<PrivateRoute element={<ActivityLogs />} />}
+        />
+        <Route path="/faq" element={<PrivateRoute element={<FaQPage />} />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>

@@ -11,8 +11,9 @@
 }
 .popUpInner {
   background-color: white;
-  display: flex;
-  justify-content: space-between;
+  border: 1px solid #2d56fb5b;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
   gap: 10px;
   width: 100%;
   height: calc(100% - 20px);
@@ -38,7 +39,9 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
-  background-color: #f0f0f0;
+  border-radius: 2px;
+  background-color: #2d56fb0b;
+  border: 1px solid #2d56fb5b;
 }
 .studentName {
   font-size: 20px;
@@ -50,10 +53,10 @@
   height: 130px;
   max-width: 500px;
   margin-bottom: 65px;
-  min-width: 350px;
 }
 .profileContainer {
   position: absolute;
+
   bottom: -50px;
   left: 50%;
   transform: translateX(-50%);
@@ -65,7 +68,7 @@
   justify-content: center;
   border: 4px solid white;
   height: 130px;
-  width: 130px;
+  max-width: 130px;
 }
 .studentInformation {
   text-align: start;
@@ -107,13 +110,18 @@
   flex-direction: column;
   justify-content: start;
   align-items: start;
-  background-color: #f0f0f0;
+  border: 1px solid #2d56fb5b;
+  background-color: #2d56fb0b;
   height: 100%;
   width: 100%;
 }
 .requirementBody {
   width: 100%;
   padding: 10px;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
 }
 .header {
   background-color: #2d55fb;
@@ -126,15 +134,42 @@
 }
 .design {
   height: 130px;
+  max-width: 942px;
   background-color: #2d55fb;
   width: 100%;
   background-image: url(../../assets/BackgroundImage.png);
 }
+.carouselContainer {
+  height: 100%;
+  width: 100%;
+  background-color: green;
+}
+.carouselItems {
+  width: 100%;
+  height: 130px;
+  max-width: 942px;
+  text-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  align-items: center;
+  color: white;
+  font-size: 50px;
+}
+.carouselText {
+  text-wrap: wrap;
+  background-color: red;
+}
 .requirementContainer {
   display: grid;
   margin-top: 10px;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 20px;
+  max-height: 480px;
+  overflow-y: scroll;
+  padding-bottom: 10px;
+  height: calc();
+  scrollbar-width: none;
 }
 .requirement {
   display: flex;
@@ -142,19 +177,23 @@
   width: 100%;
   justify-content: space-between;
   gap: 5px;
-  background-color: white;
+  background-color: #2d56fb0b;
+  border: 1px solid #2d56fb5b;
+  border-radius: 2px;
   align-items: center;
 }
 .imageContainer {
-  background-color: #d9d9d9;
+  background-color: white;
   height: 100%;
-  width: 150px;
+  width: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px;
 }
 .imageContainer > img {
   width: 100%;
+  height: 100%;
 }
 .requirementDetails {
   width: 100%;
@@ -164,22 +203,26 @@
   justify-content: space-between;
   padding: 10px;
 }
-.requirementDetails > div {
+.requirementStatus {
   font-size: 12px;
   text-align: start;
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
+.actionContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
 .submitButton {
   height: 35px;
   font-family: poppins;
   font-size: 12px;
   font-weight: 500;
+  width: 100%;
   border: none;
   color: white;
-
-  text-align: center;
   margin: 0;
   display: flex;
   align-items: center;

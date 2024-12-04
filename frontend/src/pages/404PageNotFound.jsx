@@ -1,11 +1,12 @@
 import NotFound from "../assets/404Notfound.png";
+import Header from "../components/Header/Header";
 const NotFoundPage = () => {
   const style = {
     display: "flex",
     textAlign: "center",
     alignItems: "center",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "start",
     gap: "20px",
     width: "100vw",
     height: "100vh",
@@ -26,6 +27,7 @@ const NotFoundPage = () => {
   return (
     <>
       <div style={style}>
+        <Header />
         <img src={NotFound} alt="illustration" />
         <h2>Page Not Found</h2>
         <button style={buttonStyle} onClick={navigate}>

@@ -1,6 +1,6 @@
 import { Oval } from "react-loader-spinner";
 
-const OvalLoader = () => {
+const OvalLoader = (props) => {
   return (
     <>
       <div
@@ -8,7 +8,7 @@ const OvalLoader = () => {
           position: "absolute",
           inset: "0",
           zIndex: "10",
-          backgroundColor: " rgba(0, 0, 0, 0.304)",
+          backgroundColor: props.color,
           display: "grid",
           placeItems: "center",
         }}

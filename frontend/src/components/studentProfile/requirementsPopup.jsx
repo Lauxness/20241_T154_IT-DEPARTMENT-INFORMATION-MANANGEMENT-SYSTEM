@@ -2,8 +2,10 @@ import styles from "./style.module.css";
 import { useEffect, useState } from "react";
 import filePlaceholder from "../../assets/filePlaceholder.png";
 import Profile from "./Profile";
-import { uploadFile } from "../../api";
+import { uploadFile, deleteRequirement, updateRequirement } from "../../api";
 import OvalLoader from "../loader/OvalLoader";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from "react-responsive-carousel";
 import Swal from "sweetalert2";
 
 function RequirementsPopup(props) {
@@ -77,7 +79,6 @@ function RequirementsPopup(props) {
       console.error("No file selected.");
       return;
     }
-
     const formData = new FormData();
     formData.append("requirement", file);
     formData.append("requirementName", requirementName);
@@ -87,19 +88,6 @@ function RequirementsPopup(props) {
       const response = await uploadFile(currentId, formData);
       if (response.status === 200) {
         showSwal(true, response.data.message);
-        setStudentRequirements((prev) =>
-          prev.map((req) =>
-            req.requirementName === requirementName
-              ? {
-                  ...req,
-                  status: "Submitted",
-                  dateSubmitted: new Date(),
-                  fileThumbnailLink: response.data.fileThumbnailLink,
-                  fileViewLink: response.data.fileViewLink,
-                }
-              : req
-          )
-        );
       }
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -108,19 +96,81 @@ function RequirementsPopup(props) {
       setLoading(false);
     }
   };
+  const handleImageChangeUpdate = async (e, reqId, requirementName) => {
+    const file = e.target.files[0];
+    setLoading(true);
+    if (!file) {
+      console.error("No file selected.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("requirement", file);
+    formData.append("requirementName", requirementName);
+
+    try {
+      const currentId = props.studentData._id;
+      const response = await updateRequirement(currentId, reqId, formData);
+      if (response.status === 200) {
+        showSwal(true, response.data.message);
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      showSwal(false, "File upload failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleDeleteRequirement = async (studentData, reqData) => {
+    const id = studentData._id;
+    const reqId = reqData._id;
+    try {
+      const response = await deleteRequirement(id, reqId);
+      if (response.status === 200) {
+        return response;
+      }
+    } catch (error) {
+      console.log(error);
+      return error.response;
+    }
+  };
+
+  const showDeleteSwal = async (studentData, reqData) => {
+    Swal.fire({
+      title: "Continue?",
+      text: "This file will be removed permanently!",
+      icon: "warning",
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Cancel",
+      showCancelButton: true,
+      showCloseButton: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const isDeleted = await handleDeleteRequirement(studentData, reqData);
+        if (isDeleted.status === 200) {
+          showSwal(true, isDeleted.data.message);
+        } else {
+          showSwal(true, isDeleted.data.message);
+        }
+      }
+    });
+  };
 
   const showSwal = (success, message) => {
     Swal.fire({
       icon: success ? "success" : "error",
-      title: success ? message : "Oops...",
-      text: success ? "" : message,
+      title: success ? "Success" : "Oops...",
+      text: message,
       showConfirmButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        props.triggerRequirements();
+      }
     });
   };
 
   return props.trigger ? (
     <>
-      {loading && <OvalLoader />}
+      {loading && <OvalLoader color="rgba(0, 0, 0, 0.304)" />}
       <div className={styles.popUpContainer}>
         <div className={styles.popUpInner}>
           <Profile
@@ -132,7 +182,29 @@ function RequirementsPopup(props) {
               <p>Student requirements</p>
             </div>
             <div className={styles.requirementBody}>
-              <div className={styles.design}></div>
+              <div className={styles.design}>
+                <Carousel
+                  style={{ backgroundColor: "red" }}
+                  showArrows={false}
+                  dynamicHeight={false}
+                  infiniteLoop={true}
+                  autoPlay={true}
+                  showThumbs={false}
+                  interval={2000}
+                >
+                  <p className={styles.carouselItems}>
+                    Bukidnon State University
+                  </p>
+                  <p className={styles.carouselItems}>College of Technology</p>
+                  <p className={styles.carouselItems}>Information Technology</p>
+                  <p className={styles.carouselItems}>
+                    Entertainment And Multimedia
+                  </p>
+                  <p className={styles.carouselItems}>
+                    Information Management System
+                  </p>
+                </Carousel>
+              </div>
               <div className={styles.requirementContainer}>
                 {studentRequirements.map((requirement, index) => (
                   <form className={styles.requirement} key={index}>
@@ -140,10 +212,11 @@ function RequirementsPopup(props) {
                       <img
                         src={requirement.fileThumbnailLink || filePlaceholder}
                         alt={requirement.requirementName || "Requirement"}
+                        loading="lazy"
                       />
                     </div>
                     <div className={styles.requirementDetails}>
-                      <div>
+                      <div className={styles.requirementStatus}>
                         <p>Name: {requirement.requirementName}</p>
                         <p>
                           Status:{" "}
@@ -170,17 +243,56 @@ function RequirementsPopup(props) {
                           handleImageChange(e, requirement.requirementName)
                         }
                       />
+                      <input
+                        type="file"
+                        style={{ display: "none" }}
+                        id={`updateImage-${index}`}
+                        accept="image/png, image/jpeg, image/jpg"
+                        name="requirement"
+                        onChange={(e) =>
+                          handleImageChangeUpdate(
+                            e,
+                            requirement._id,
+                            requirement.requirementName
+                          )
+                        }
+                      />
 
                       {requirement.fileViewLink ? (
-                        <a
-                          href={requirement.fileViewLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.submitButton}
-                          style={{ backgroundColor: "#2b9447" }}
+                        <div
+                          className={styles.actionContainer}
+                          style={{ display: "flex" }}
                         >
-                          View File
-                        </a>
+                          <a
+                            href={requirement.fileViewLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.submitButton}
+                            style={{ backgroundColor: "#2b9447" }}
+                          >
+                            View File
+                          </a>
+                          <label
+                            htmlFor={`updateImage-${index}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.submitButton}
+                            style={{ backgroundColor: "#2d55fb" }}
+                          >
+                            Update File
+                          </label>
+                          <a
+                            onClick={() =>
+                              showDeleteSwal(props.studentData, requirement)
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.submitButton}
+                            style={{ backgroundColor: "#f44960" }}
+                          >
+                            Remove File
+                          </a>
+                        </div>
                       ) : (
                         <label
                           htmlFor={`uploadImage-${index}`}

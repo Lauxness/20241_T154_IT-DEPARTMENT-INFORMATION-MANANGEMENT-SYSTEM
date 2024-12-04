@@ -30,7 +30,6 @@ function Header() {
       setNavBar(false);
     }
   };
-  console.log(style.header);
   window.addEventListener("scroll", changeBackground);
   return (
     <>

@@ -17,10 +17,10 @@ function OfficerModal(props) {
       setAssignedYear(props.initialOfficerData.assignedYear || "");
       setAssignedProgram(props.initialOfficerData.assignedProgram || "");
     }
-  }, [props.trigger, props.initialOfficerData]);
+  }, [props.trigger]);
 
   const handleClose = () => {
-    console.log(props.initialOfficerData);
+    console.log(props.initialOfficerData, props.initialOfficerData);
 
     props.triggerModal();
     props.setInitialOfficerData(null);
@@ -91,7 +91,7 @@ function OfficerModal(props) {
 
   return props.trigger ? (
     <div className={styles.popUpContainer}>
-      {isLoading ? <OvalLoader /> : ""}
+      {isLoading ? <OvalLoader color="rgba(0, 0, 0, 0.304)" /> : ""}
       <div className={styles.popUpInner}>
         <div className={styles.header}>
           <p className={styles.title}>

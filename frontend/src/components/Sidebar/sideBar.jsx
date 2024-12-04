@@ -7,6 +7,7 @@ import {
   MdPerson3,
   MdStackedBarChart,
   MdSettingsBrightness,
+  MdArchive,
   MdQuestionMark,
 } from "react-icons/md";
 import "./style.css";
@@ -14,7 +15,7 @@ import Swal from "sweetalert2";
 
 function SidebarComponent(props) {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+
   const showSwal = () => {
     Swal.fire({
       icon: "warning",
@@ -33,9 +34,8 @@ function SidebarComponent(props) {
     localStorage.removeItem("user-info");
     navigate("/");
   };
-  console.log(props.currentPage);
   return (
-    <Sidebar width="300px" collapsed={collapsed}>
+    <Sidebar width="300px" collapsed={props.collapsed}>
       <Menu
         menuItemStyles={{
           button: ({ level, active }) => {
@@ -64,7 +64,10 @@ function SidebarComponent(props) {
             props.currentPage === "chart" ||
             props.currentPage === "generate_report"
           }
-          defaultOpen={props.currentPage === "enrollmentOfficers"}
+          defaultOpen={
+            props.currentPage === "enrollmentOfficers" ||
+            props.currentPage === "chart"
+          }
           label="Dashboard"
           icon={<MdStackedBarChart color="#2d55fb" fontSize="20px" />}
         >
@@ -81,7 +84,7 @@ function SidebarComponent(props) {
             Generate Report
           </MenuItem>
 
-          {props.userInfo.role === "admin" ? (
+          {props.userInfo?.role === "admin" ? (
             <MenuItem
               component={<Link to="/enrollment_officers" />}
               active={props.currentPage === "enrollmentOfficers"}
@@ -92,12 +95,20 @@ function SidebarComponent(props) {
         </SubMenu>
 
         <MenuItem
-          active={props.currentPage === "announcements"}
-          component={<Link to="/announcements" />}
+          active={props.currentPage === "archive"}
+          component={<Link to="/archived_students" />}
+          icon={<MdArchive color="#2d55fb" fontSize="20px" />}
+          className="sidebar-menu-item"
+        >
+          Archived students
+        </MenuItem>
+        <MenuItem
+          active={props.currentPage === "activityLogs"}
+          component={<Link to="/activity_logs" />}
           icon={<MdNotificationImportant color="#2d55fb" fontSize="20px" />}
           className="sidebar-menu-item"
         >
-          Announcements
+          Activity logs
         </MenuItem>
         <MenuItem
           active={props.currentPage === "notifications"}
@@ -106,15 +117,6 @@ function SidebarComponent(props) {
         >
           Notifications
         </MenuItem>
-
-        <SubMenu
-          label="Theme"
-          icon={<MdSettingsBrightness color="#2d55fb" fontSize="20px" />}
-        >
-          <MenuItem>Dark theme</MenuItem>
-          <MenuItem>Light theme</MenuItem>
-        </SubMenu>
-
         <MenuItem
           active={props.currentPage === "faq"}
           component={<Link to="/faq" />}

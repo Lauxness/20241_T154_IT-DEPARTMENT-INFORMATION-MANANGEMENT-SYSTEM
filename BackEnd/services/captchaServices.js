@@ -7,12 +7,13 @@ const verifyCaptcha = async (req, res) => {
   const { captcha } = req.body;
 
   if (!captcha) {
-    return res.json({ success: false, msg: "Please Select Captcha" });
+    return res
+      .status(422)
+      .json({ success: false, msg: "Please Select Captcha" });
   }
 
   const secretKey = process.env.CAPTCHA_SECRET_KEY;
   const verifyUrl = `https://google.com/recaptcha/api/siteverify`;
-
   try {
     const response = await axios.post(verifyUrl, null, {
       params: {
@@ -23,9 +24,11 @@ const verifyCaptcha = async (req, res) => {
     });
 
     if (response.data.success) {
-      return res.json({ success: true, msg: "Captcha Passed" });
+      return res.status(200).json({ success: true, msg: "Captcha Passed" });
     } else {
-      return res.json({ success: false, msg: "Failed captcha verification" });
+      return res
+        .status(422)
+        .json({ success: false, msg: "Failed captcha verification" });
     }
   } catch (error) {
     console.error("Error verifying captcha:", error);

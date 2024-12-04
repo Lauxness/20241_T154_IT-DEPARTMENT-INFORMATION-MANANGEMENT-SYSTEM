@@ -6,9 +6,10 @@ import DataTable from "react-data-table-component";
 import Header from "../components/Header/Header";
 import SidebarComponent from "../components/Sidebar/sideBar";
 import SearchBar from "material-ui-search-bar";
-import { MdEditSquare, MdDeleteForever } from "react-icons/md";
+import { MdEditSquare, MdDeleteForever, MdLock } from "react-icons/md";
 import OfficerModal from "../components/Modal/officerModal";
 import OvalLoader from "../components/loader/OvalLoader";
+import Upperbar from "../components/Upperbar/Upperbar";
 function Home() {
   const [userInfo, setUserInfo] = useState({});
   const [Officers, setOfficers] = useState([]);
@@ -17,7 +18,9 @@ function Home() {
   const [initialOfficerData, setInitialOfficerData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
 
   const fetchEnrollmentOfficers = async () => {
     const data = localStorage.getItem("user-info");
@@ -118,7 +121,7 @@ function Home() {
     { name: "Officer Email", selector: (row) => row.emailAddress },
     {
       name: "Name",
-      selector: (row) => row.name || "Waiting to Login for the first time",
+      selector: (row) => row.name || " Account not yet activated",
       sortable: true,
       cell: (data) => (
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -131,7 +134,16 @@ function Home() {
           ) : (
             ""
           )}
-          <p>{data.name || "Waiting the first Login"}</p>
+          <p>
+            {data.name ? (
+              data.name
+            ) : (
+              <>
+                Account not yet activated{" "}
+                <MdLock style={{ fontSize: "1.1em", marginLeft: "5px" }} />
+              </>
+            )}
+          </p>
         </div>
       ),
     },
@@ -156,6 +168,7 @@ function Home() {
             height: "60%",
             width: "100px",
             gap: "10px",
+            justifyContent: "center",
           }}
         >
           <button
@@ -207,14 +220,14 @@ function Home() {
 
   const containerStyle = {
     display: "flex",
-    height: "calc(100vh - 71px)",
+    height: "calc(100vh - 135px)",
     width: "100%",
     overflow: "hidden",
   };
 
   return (
     <>
-      {isLoading ? <OvalLoader /> : ""}
+      {isLoading ? <OvalLoader color="rgba(0, 0, 0, 0.304)" /> : ""}
       <OfficerModal
         trigger={trigger}
         triggerModal={setTrigger}
@@ -222,10 +235,17 @@ function Home() {
         setInitialOfficerData={setInitialOfficerData}
       />
       <Header />
+      <Upperbar
+        userInfo={userInfo}
+        currentPage="Enrollment Officer List"
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+      />
       <div style={containerStyle}>
         <SidebarComponent
           userInfo={userInfo}
           currentPage="enrollmentOfficers"
+          collapsed={collapsed}
         />
         <div
           style={{
@@ -237,62 +257,6 @@ function Home() {
             marginTop: "5px",
           }}
         >
-          <div
-            style={{
-              borderBottom: "1px solid #ababab",
-
-              display: "flex",
-              width: "100%",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                height: "100%",
-                alignItems: "center",
-                gap: "10px",
-                flex: "1",
-              }}
-            >
-              <p
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "500",
-                }}
-              >
-                Enrollment Officers List
-              </p>
-            </div>
-            <div
-              style={{
-                width: "300px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "end",
-                paddingRight: "10px",
-                gap: "10px",
-                paddingBottom: "6px",
-              }}
-            >
-              <div style={{ textAlign: "end", fontSize: "12px" }}>
-                <p>
-                  {userInfo?.role || "Guest"} , {userInfo?.name || "Guest"}
-                </p>
-                <p>{userInfo?.emailAddress || "No email available"}</p>
-              </div>
-              <div style={{ padding: "0", height: "35px" }}>
-                <img
-                  src={userInfo?.profilePicture || "No email available"}
-                  alt=""
-                  width="35px"
-                  style={{ height: "100%", borderRadius: "50%" }}
-                />
-              </div>
-            </div>
-          </div>
           <div
             style={{
               paddingBottom: "5px",

@@ -1,4 +1,2 @@
-const message = (req, res) => {
-  res.send(console.log("Message sent"));
-};
+const message = (req, res) => {};
 module.exports = message;

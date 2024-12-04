@@ -5,7 +5,7 @@ import { Developers } from "../components/Developers/Developers";
 import { Projects } from "../components/About/Projects";
 import { Contact } from "../components/Contact/Contact";
 import Content from "../components/Home/content/Content";
-function LandingPage() {
+function LandingPage(props) {
   const height = {
     height: "700px",
     display: "flex",
@@ -20,7 +20,7 @@ function LandingPage() {
       <div className="container" style={style1}>
         <div id="home" style={height}>
           <Wave />
-          <Header />
+          <Header setIsAuthenticated={props.setIsAuthenticated} />
           <Content />
         </div>
         <div id="Features">

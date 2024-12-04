@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import GoogleButton from "react-google-button";
 import GoogleLogin from "./GoogleLogin";
+import { Oval } from "react-loader-spinner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./style.css";
 
 function LoginModal(props) {
   const [captcha, setCaptcha] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState();
   const [captchaVerified, setCaptchaVerified] = useState(false);
 
   const GoogleWrapper = (props) => (
@@ -15,6 +17,7 @@ function LoginModal(props) {
       <GoogleLogin
         triggerLogin={props.triggerLogin}
         captchaCheck={captchaCheck}
+        setIsAuthenticated={props.setIsAuthenticated}
       />
     </GoogleOAuthProvider>
   );
@@ -35,6 +38,7 @@ function LoginModal(props) {
     updateCaptcha(val);
     const url = "http://localhost:8000/index/verifyCaptcha";
     try {
+      setIsLoading(true);
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -43,8 +47,9 @@ function LoginModal(props) {
         },
         body: JSON.stringify({ captcha: val }),
       });
+      console.log(val);
       const data = await response.json();
-      console.log(data);
+      console.log(data.success);
       if (data.success) {
         setMessage("");
         captchaCheck();
@@ -55,6 +60,8 @@ function LoginModal(props) {
     } catch (error) {
       console.error("Captcha verification failed:", error);
       setMessage("Captcha verification failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleModalClose = () => {
@@ -69,8 +76,25 @@ function LoginModal(props) {
           sitekey="6LcjQm0qAAAAADIuGQVgIIlFR_rtgpm0dcad97ly"
           onChange={continueWithGoogle}
         />
+        {isLoading ? (
+          <Oval
+            visible={true}
+            height="30"
+            width="30"
+            color="#2d55fb"
+            secondaryColor="rgba(45, 85, 251, 0.2)"
+            ariaLabel="oval-loading"
+          />
+        ) : (
+          ""
+        )}
         <div>{message}</div>
-        {captchaVerified && <GoogleWrapper triggerLogin={props.triggerTask} />}
+        {captchaVerified && (
+          <GoogleWrapper
+            triggerLogin={props.triggerTask}
+            setIsAuthenticated={props.setIsAuthenticated}
+          />
+        )}
       </div>
     </div>
   ) : null;

@@ -8,11 +8,15 @@ function RefreshHandler({ setIsAuthenticated }) {
   useEffect(() => {
     const data = localStorage.getItem("user-info");
     const token = JSON.parse(data)?.token;
+
     if (token) {
       setIsAuthenticated(true);
-      if (location.pathname === "/" || location.pathname === "/login") {
-        navigate("/home", { replace: false });
+      if (location.pathname === "/") {
+        navigate("/home", { replace: true });
       }
+    } else {
+      setIsAuthenticated(false);
+      navigate("/", { replace: true });
     }
   }, [location, navigate, setIsAuthenticated]);
 

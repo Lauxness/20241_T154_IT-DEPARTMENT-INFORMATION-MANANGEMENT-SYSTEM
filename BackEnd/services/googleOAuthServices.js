@@ -3,7 +3,7 @@ const axios = require("axios");
 const jwt = require("jsonwebtoken");
 const { oauth2Client } = require("../utils/googleClient");
 
-exports.googleAuth = async (req, res, next) => {
+exports.googleAuth = async (req, res) => {
   const code = req.query.code;
   try {
     const googleRes = await oauth2Client.getToken(code);

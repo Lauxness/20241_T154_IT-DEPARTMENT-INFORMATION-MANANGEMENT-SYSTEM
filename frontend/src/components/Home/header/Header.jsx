@@ -4,7 +4,7 @@ import COTLogo from "../../../assets/COTLogo.png";
 import LoginModal from "../loginModal/LoginModal";
 import "./style.css";
 
-function Header() {
+function Header(props) {
   const [trigger, setTrigger] = useState(false);
   const [navBar, setNavBar] = useState(false);
   const [dispayNavbar, setDisplayNavbar] = useState(false);
@@ -34,7 +34,11 @@ function Header() {
   return (
     <>
       <div className={navBar ? "header active" : "header"}>
-        <LoginModal trigger={trigger} triggerTask={triggerLogin} />
+        <LoginModal
+          trigger={trigger}
+          triggerTask={triggerLogin}
+          setIsAuthenticated={props.setIsAuthenticated}
+        />
         <div className="project-name">
           <img src={BukSuLogo} alt="Buksu logo" />
           <img src={COTLogo} alt="COT logo" />

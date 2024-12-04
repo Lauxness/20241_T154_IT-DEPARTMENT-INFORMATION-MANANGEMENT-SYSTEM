@@ -27,6 +27,15 @@ const studentSchema = new Schema(
       type: String,
       required: true,
     },
+    folderId: {
+      type: String,
+      default: "",
+    },
+    isArchived: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     status: {
       type: String,
       enum: ["Complete", "Incomplete"],
@@ -39,6 +48,11 @@ const studentSchema = new Schema(
         ref: "studentRequirement",
       },
     ],
+    lockExpiresAt: { type: Date, default: null },
+    isLocked: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

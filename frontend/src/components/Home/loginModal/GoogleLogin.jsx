@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import OvalLoader from "../../loader/OvalLoader";
 
-function GoogleLogin({ triggerLogin, captchaCheck }) {
+function GoogleLogin(props) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,9 +21,9 @@ function GoogleLogin({ triggerLogin, captchaCheck }) {
   };
 
   const confirmLogout = () => {
-    triggerLogin();
+    props.striggerLogin();
     localStorage.removeItem("_grecaptcha");
-    captchaCheck();
+    props.captchaCheck();
     navigate("/");
   };
 
@@ -59,6 +59,7 @@ function GoogleLogin({ triggerLogin, captchaCheck }) {
       localStorage.setItem("user-info", JSON.stringify(userInfo));
 
       console.log("User Info:", userInfo);
+      props.setIsAuthenticated(true);
       navigate("/home");
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Unexpected error";
@@ -82,7 +83,7 @@ function GoogleLogin({ triggerLogin, captchaCheck }) {
     <>
       {isLoading && (
         <div>
-          <OvalLoader />
+          <OvalLoader color="rgba(0, 0, 0, 0.304)" />
         </div>
       )}
       <div>
