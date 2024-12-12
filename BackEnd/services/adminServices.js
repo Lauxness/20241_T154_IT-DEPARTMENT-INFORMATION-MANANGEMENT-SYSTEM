@@ -1,14 +1,20 @@
 const Accounts = require("../models/accountsModel");
 const nodemailer = require("nodemailer");
+const notification = require("../models/notificationModel");
 const { google } = require("googleapis");
+const mongoose = require("mongoose");
 const addEnrollmentOfficer = async (req, res) => {
   const user = req.user;
-
+  const role = req.user.role;
+  if (role === "officer") {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
-    const accountInfo = await Accounts.findById(user.id);
+    const accountInfo = await Accounts.findById(user.id).session(session);
     const fromEmail = accountInfo.emailAddress;
     const refresh_token = accountInfo.refreshToken;
-
     const {
       googleId,
       name,
@@ -20,51 +26,85 @@ const addEnrollmentOfficer = async (req, res) => {
       assignedYear,
       assignedProgram,
     } = req.body;
+
     if (
       !(emailAddress && /^[a-zA-Z0-9._%+-]+@buksu\.edu\.ph$/.test(emailAddress))
     ) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({ message: "Email Address is not valid" });
     }
+    const existingAccount = await Accounts.findOne({ emailAddress }).session(
+      session
+    );
 
-    const existingAccount = await Accounts.findOne({ emailAddress });
-
-    if (existingAccount) {
-      return res.status(400).json({
+    if (existingAccount && existingAccount.isActive === true) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(409).json({
         message: "An account with this email address already exists.",
       });
     }
-    const newAccount = await Accounts.create({
-      googleId,
-      name,
-      emailAddress,
-      profilePicture,
-      accessToken,
-      refreshToken,
-      role,
-      assignedYear,
-      assignedProgram,
-    });
+    if (existingAccount && existingAccount.isActive === false) {
+      existingAccount.isActive = true;
+      await existingAccount.save();
+      if (existingAccount.assignedProgram && existingAccount.assignedYear) {
+        const newNotif = {
+          reciever: existingAccount._id,
+          message: `Hello there we would like to inform you that you are assigned for the program ${existingAccount.assignedProgram} ${existingAccount.assignedYear} students`,
+        };
+        await notification.create([newNotif], { session });
+      }
+    } else {
+      const newAccount = await Accounts.create(
+        [
+          {
+            googleId,
+            name,
+            emailAddress,
+            profilePicture,
+            accessToken,
+            refreshToken,
+            role,
+            assignedYear,
+            assignedProgram,
+          },
+        ],
+        { session }
+      );
+      const newNotif = {
+        reciever: newAccount._id,
+        message:
+          "Welcome to our system Officer, Hope you`re doing well today> :>",
+      };
+      await notification.create([newNotif], { session });
+      if (newAccount.assignedProgram && newAccount.assignedYear) {
+        const newNotif = {
+          reciever: newAccount._id,
+          message: `Hello there we would like to inform you that you are assigned for the program ${newAccount.assignedProgram} ${newAccount.assignedYear} students`,
+        };
+        await notification.create([newNotif], { session });
+      }
+    }
 
-    sendEmail(
+    await sendEmail(
       fromEmail,
       emailAddress,
       assignedProgram,
       assignedYear,
       refresh_token
-    )
-      .then(() => {
-        res.status(200).json({
-          message: "Officer added successfully",
-        });
-      })
-      .catch((error) => {
-        res
-          .status(500)
-          .json({ message: "Account created but email failed to send." });
-      });
+    );
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({
+      message: "Officer added successfully",
+    });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     console.error("Error in addEnrollmentOfficer:", error.message);
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ messge: "Internal Server Error" });
   }
 };
 
@@ -146,10 +186,13 @@ const sendEmail = async (
 };
 
 const searchEnrollmentOfficer = async (req, res) => {
+  const role = req.user.role;
+  if (role === "officer") {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
   const id = req.params.id;
   try {
     if (id) {
-      // Get a specific Enrollment Officer by ID
       const officer = await Accounts.findById(id);
       if (!officer) {
         return res
@@ -159,31 +202,47 @@ const searchEnrollmentOfficer = async (req, res) => {
       return res.status(200).json(officer);
     }
   } catch (error) {
-    res.status(400).json({ message: error });
+    res.status(500).json({ message: "Internal Server Error." });
   }
 };
 const deleteEnrollmentOfficer = async (req, res) => {
   const id = req.params.id;
+  const role = req.user.role;
+  if (role === "officer") {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
   console.log(id);
   try {
-    const deletedAccount = await Accounts.findByIdAndDelete(id);
+    const deletedAccount = await Accounts.findByIdAndUpdate(id, {
+      isActive: false,
+    });
     if (!deletedAccount) {
       return res.status(404).json({ message: "Enrollment Officer not found" });
     }
     res
       .status(200)
-      .json({ message: "Enrollment Officer deleted successfully" });
+      .json({ message: "Enrollment Officer Removed successfully" });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 const updateEnrollmentOfficer = async (req, res) => {
+  const role = req.user.role;
+  if (role === "officer") {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
   const updatedOfficer = req.body;
   console.log("REquest body", updatedOfficer.emailAddress);
   try {
     const enrollmentOfficer = await Accounts.findById(req.params.id);
     if (!enrollmentOfficer) {
       return res.status(404).json({ message: "Officer not found" });
+    }
+    if (
+      updatedOfficer.assignedProgram === enrollmentOfficer.assignedProgram &&
+      updatedOfficer.assignedYear === enrollmentOfficer.assignedYear
+    ) {
+      return res.status(400).json({ message: "Nothing has been updated." });
     }
     enrollmentOfficer.googleId =
       req.body.googleId || enrollmentOfficer.googleId;
@@ -200,9 +259,42 @@ const updateEnrollmentOfficer = async (req, res) => {
       req.body.assignedProgram || enrollmentOfficer.assignedProgram;
 
     const updatedEnrollmentOfficer = await enrollmentOfficer.save();
-    res.status(200).json({ message: "Officer was successfully updated!" });
+    return res
+      .status(200)
+      .json({ message: "Officer was successfully updated!" });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal Server Error!" });
+  }
+};
+const addAdmin = async (req, res) => {
+  const role = req.user.role;
+  const id = req.params.id;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  if (role === "officer") {
+    session.abortTransaction();
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
+
+  try {
+    const officer = await Accounts.findByIdAndUpdate(
+      id,
+      { role: "admin" },
+      { session }
+    );
+    if (!officer) {
+      return res.status(404).json({ message: "Officer not found!" });
+    }
+    const newNotif = {
+      reciever: officer._id,
+      message: `Hello there we would like to inform you that you are assigned as a Admin in the system.`,
+    };
+    await notification.create([newNotif], { session });
+    session.commitTransaction();
+    return res.status(200).json({ message: "A new admin has been added!" });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -211,4 +303,6 @@ module.exports = {
   deleteEnrollmentOfficer,
   updateEnrollmentOfficer,
   searchEnrollmentOfficer,
+  addAdmin,
+  sendEmail,
 };

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { getAllEnrollmentOfficers, deleteOfficer } from "../api";
+import { getAllEnrollmentOfficers, deleteOfficer, addAdmin } from "../api";
 import DataTable from "react-data-table-component";
 import Header from "../components/Header/Header";
 import SidebarComponent from "../components/Sidebar/sideBar";
 import SearchBar from "material-ui-search-bar";
 import { MdEditSquare, MdDeleteForever, MdLock } from "react-icons/md";
+import { FaUser } from "react-icons/fa";
 import OfficerModal from "../components/Modal/officerModal";
 import OvalLoader from "../components/loader/OvalLoader";
 import Upperbar from "../components/Upperbar/Upperbar";
@@ -65,7 +66,7 @@ function Home() {
 
   const showSwal = async (data) => {
     Swal.fire({
-      title: "Are you sure you want to Delete?",
+      title: "Are you sure you want to Remove?",
       icon: "warning",
       confirmButtonText: "Confirm",
       cancelButtonText: "Cancel",
@@ -74,14 +75,48 @@ function Home() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const isDeleted = await handleDelete(data);
-        if (isDeleted) {
-          Swal.fire("Deleted!", "", "success").then((result) => {
-            if (result.isConfirmed) {
-              window.location.reload();
+        if (isDeleted.status === 200) {
+          Swal.fire("Success", isDeleted.data.message, "success").then(
+            (result) => {
+              if (result.isConfirmed) {
+                window.location.reload();
+              }
             }
-          });
+          );
         } else {
           showSwalTokenExp();
+        }
+      }
+    });
+  };
+  const showAddAdminSwal = async (data) => {
+    Swal.fire({
+      title: "Continue?",
+      text: "This officer will become an Admin and will be removed in the list.",
+      icon: "warning",
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Cancel",
+      showCancelButton: true,
+      showCloseButton: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setIsLoading(true);
+          const response = await addAdmin(data._id);
+          if (response.status === 200) {
+            Swal.fire("Success", response.data.message, "success").then(
+              (result) => {
+                if (result.isConfirmed) {
+                  window.location.reload();
+                }
+              }
+            );
+          }
+        } catch (error) {
+          Swal.fire("Error", "Something went wrong", "error");
+          console.log(error);
+        } finally {
+          setIsLoading(false);
         }
       }
     });
@@ -98,14 +133,14 @@ function Home() {
       const response = await deleteOfficer(id);
       if (response.status === 200) {
         console.log(response);
-        return true;
+        return response;
       } else {
         console.error("Failed to delete Officer:", response);
-        return false;
+        return response;
       }
     } catch (error) {
       console.error("Error deleting Officer:", error);
-      return false;
+      return response;
     } finally {
       setIsLoading(false);
     }
@@ -160,7 +195,8 @@ function Home() {
     {
       name: "Actions",
       align: "center",
-      button: true,
+      button: "true",
+      width: "150px",
       cell: (data) => (
         <div
           style={{
@@ -171,6 +207,19 @@ function Home() {
             justifyContent: "center",
           }}
         >
+          <button
+            style={{
+              backgroundColor: "#2d55fb",
+              padding: "5px ",
+              color: "white",
+              border: "none",
+              borderRadius: "2px",
+              cursor: "pointer",
+            }}
+            onClick={() => showAddAdminSwal(data)}
+          >
+            <FaUser fontSize="20px" />
+          </button>
           <button
             style={{
               backgroundColor: "#f44960",
@@ -254,7 +303,8 @@ function Home() {
             flexDirection: "column",
             gap: "10px",
             marginLeft: "20px",
-            marginTop: "5px",
+
+            position: "relative",
           }}
         >
           <div
@@ -302,7 +352,7 @@ function Home() {
             </div>
           </div>
           {loading ? (
-            <div>Loading Officers...</div>
+            <OvalLoader />
           ) : (
             <DataTable
               columns={columns}

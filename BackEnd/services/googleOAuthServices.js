@@ -5,6 +5,9 @@ const { oauth2Client } = require("../utils/googleClient");
 
 exports.googleAuth = async (req, res) => {
   const code = req.query.code;
+  if (!code) {
+    return res.status(404).json({ message: "Code not Found!" });
+  }
   try {
     const googleRes = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(googleRes.tokens);

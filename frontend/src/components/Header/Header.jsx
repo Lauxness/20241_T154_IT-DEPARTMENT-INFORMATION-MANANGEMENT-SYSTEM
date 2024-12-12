@@ -16,13 +16,6 @@ function Header() {
       setTrigger(true);
     }
   };
-  const triggerDisplayNavBar = () => {
-    if (dispayNavbar) {
-      setDisplayNavbar(false);
-    } else {
-      setDisplayNavbar(true);
-    }
-  };
   const changeBackground = () => {
     if (window.scrollY >= 70) {
       setNavBar(true);
@@ -35,7 +28,6 @@ function Header() {
     <>
       <div className={style.heading}>
         <div className={style.projectName}>
-          <img src={BukSuLogo} alt="Buksu logo" />
           <img src={COTLogo} alt="COT logo" />
           <p>IT DEPARTMENT INFORMATION MANAGEMENT SYSTEM</p>
         </div>

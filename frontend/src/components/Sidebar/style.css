@@ -6,3 +6,19 @@
 .sidebar-submenu .sidebar-menu-item:hover {
   background-color: rgba(45, 85, 251, 0.1);
 }
+.notifCount {
+  background-color: rgb(255, 42, 42);
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: 50%;
+  color: white;
+  left: 22px;
+  top: 8px;
+}

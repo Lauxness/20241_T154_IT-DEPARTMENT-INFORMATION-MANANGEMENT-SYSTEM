@@ -36,11 +36,21 @@ const studentSchema = new Schema(
       required: true,
       default: false,
     },
+    semesterGWA: {
+      type: String,
+    },
+    lastNotified: {
+      type: Date,
+      default: null,
+    },
     status: {
       type: String,
-      enum: ["Complete", "Incomplete"],
-      default: "Incomplete",
-      required: true,
+      enum: ["Regular", "Irregular", "LOA"],
+      default: "Regular",
+    },
+    isComplete: {
+      type: Boolean,
+      default: false,
     },
     requirements: [
       {

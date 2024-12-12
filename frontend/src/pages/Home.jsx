@@ -3,9 +3,11 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import {
   getAllStudents,
-  deleteStudent,
+  archiveStudent,
   getStudent,
   unlockStudent,
+  getStudentBySemester,
+  notifyAllStudents,
 } from "../api";
 import DataTable from "react-data-table-component";
 import Header from "../components/Header/Header";
@@ -13,13 +15,9 @@ import SidebarComponent from "../components/Sidebar/sideBar";
 import SearchBar from "material-ui-search-bar";
 import OvalLoader from "../components/loader/OvalLoader";
 import Upperbar from "../components/Upperbar/Upperbar";
-import {
-  MdEditSquare,
-  MdDeleteForever,
-  MdArchive,
-  MdLock,
-} from "react-icons/md";
+import { MdEditSquare, MdArchive, MdLock } from "react-icons/md";
 import Modal from "../components/Modal/modal";
+import SemesterModal from "../components/Modal/semesterModal";
 import RequirementsPopup from "../components/studentProfile/requirementsPopup";
 
 function Home() {
@@ -34,7 +32,11 @@ function Home() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-
+  const [semesters, setSemester] = useState([]);
+  const [currentSemester, setCurrentSemester] = useState();
+  const [selectedSemester, setSelectedSemester] = useState();
+  const [triggerSemester, setTriggerSemester] = useState(false);
+  const [editSemester, setEditSemester] = useState();
   const fetchStudents = async () => {
     const data = localStorage.getItem("user-info");
     const userData = JSON.parse(data);
@@ -43,10 +45,17 @@ function Home() {
     try {
       const response = await getAllStudents();
       if (response.status === 200) {
-        const data = response.data;
+        const data = response.data[0];
+        console.log(response.data);
         setStudents(data);
-        console.log(data);
         setSearchForStudent(data);
+        setSemester(response.data[1]);
+        console.log("asdfashdfadjks", response.data[1]);
+        const sem =
+          response.data[1][0].schoolYear + " " + response.data[1][0].semester;
+        setCurrentSemester(sem);
+        setSelectedSemester(sem);
+        console.log(data);
       }
     } catch (error) {
       if (error.response.status === 401) {
@@ -102,6 +111,13 @@ function Home() {
   };
 
   const showSwal = async (data) => {
+    if (selectedSemester !== currentSemester) {
+      return Swal.fire(
+        "Sorry",
+        "You cant perform that here you need to be in the latest semester.",
+        "error"
+      );
+    }
     Swal.fire({
       title: "Continue?",
       text: "This student will be move to archives.",
@@ -112,7 +128,7 @@ function Home() {
       showCloseButton: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const isDeleted = await handleDelete(data);
+        const isDeleted = await handleArchive(data);
         if (isDeleted) {
           Swal.fire("Moved to archives!", "", "success");
         } else {
@@ -126,10 +142,11 @@ function Home() {
     fetchStudents();
   }, []);
 
-  const handleDelete = async (data) => {
+  const handleArchive = async (data) => {
     const id = data._id;
+
     try {
-      const response = await deleteStudent(id);
+      const response = await archiveStudent(id);
       if (response.status === 200) {
         setStudents((prevStudents) =>
           prevStudents.filter((student) => student._id !== id)
@@ -147,20 +164,50 @@ function Home() {
       return false;
     }
   };
+  const handelNotifyAll = async () => {
+    Swal.fire({
+      title: "Continue?",
+      text: "This will notify all students with missing Requirements.",
+      icon: "warning",
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Cancel",
+      showCancelButton: true,
+      showCloseButton: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setIsLoading(true);
+          const response = await notifyAllStudents();
+          if (response.status === 200) {
+            Swal.fire("Success", response.data.message, "success");
+          }
+        } catch (error) {
+          Swal.fire("Failed", "Something Went Wrong", "error");
+          console.log(error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    });
+  };
 
   const handleEdit = async (data) => {
     if (trigger) {
       try {
-        console.log(data._id);
-        console.log("clicked", trigger);
         setTrigger(false);
-        const response = await unlockStudent(data._id);
-        console.log("asdfjasldkfjlsakfjdklsfalsf", response);
+        await unlockStudent(data._id);
       } catch (err) {
         console.log(err);
       }
       setInitialStudentData(null);
     } else {
+      if (selectedSemester !== currentSemester) {
+        return Swal.fire(
+          "Sorry",
+          "You cant perform that here you need to be in the latest semester.",
+          "error"
+        );
+      }
       if (data !== null) {
         try {
           const response = await getStudent(data._id);
@@ -199,11 +246,24 @@ function Home() {
     { name: "Program", selector: (row) => row.program, sortable: true },
     { name: "Year", selector: (row) => row.year, sortable: true },
     { name: "Email", selector: (row) => row.email, sortable: true },
+    {
+      name: "Requirements",
+      selector: (row) => {
+        return row.isComplete ? "Complete" : "Incomplete";
+      },
+      sortable: true,
+    },
+
     { name: "Status", selector: (row) => row.status, sortable: true },
+    {
+      name: "GWA",
+      selector: (row) => row.semesterGWA || "N/A",
+      sortable: true,
+    },
     {
       name: "Actions",
       align: "center",
-      button: true,
+      button: "true",
       cell: (data) => (
         <div
           style={{
@@ -244,7 +304,28 @@ function Home() {
       ),
     },
   ];
-
+  const handleSemesterChange = async (e) => {
+    const parameter = e.target.value;
+    if (parameter === "add") {
+      setTriggerSemester(true);
+    } else if (parameter === "edit") {
+      setEditSemester(semesters);
+      setTriggerSemester(true);
+    } else {
+      setSelectedSemester(parameter);
+      try {
+        setLoading(true);
+        const response = await getStudentBySemester(parameter);
+        const data = response.data;
+        setStudents(data);
+        setSearchForStudent(data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
   const searchHandler = (e) => {
     if (e === "") {
       setSearchForStudent(students);
@@ -276,8 +357,15 @@ function Home() {
         trigger={triggerRequirements}
         triggerRequirements={handleTriggerRequirements}
         studentData={studentData}
+        selectedSemester={selectedSemester}
+        currentSemester={currentSemester}
       />
-
+      <SemesterModal
+        semester={editSemester}
+        trigger={triggerSemester}
+        editSemester={setEditSemester}
+        setTrigger={setTriggerSemester}
+      />
       <Modal
         trigger={trigger}
         triggerModal={setTrigger}
@@ -307,7 +395,7 @@ function Home() {
             flexDirection: "column",
             gap: "10px",
             marginLeft: "20px",
-            marginTop: "5px",
+            position: "relative",
           }}
         >
           <div
@@ -327,6 +415,7 @@ function Home() {
                 alignItems: "center",
                 gap: "10px",
                 flex: "1",
+                paddingRight: "10px",
               }}
             >
               <button
@@ -352,10 +441,50 @@ function Home() {
                   margin: "0",
                 }}
               />
+              <select
+                name="semester"
+                id="semester"
+                style={{
+                  height: "80%",
+                  boxShadow: "0px 1px 2px rgba(141, 192, 247, 5)",
+                  outline: "none",
+                  border: "none",
+                  padding: "0 10px",
+                }}
+                value={selectedSemester}
+                onChange={(e) => handleSemesterChange(e)}
+              >
+                {semesters.map((s, index) => (
+                  <option key={index} value={s.schoolYear + " " + s.semester}>
+                    SY. {s.schoolYear} {s.semester} Semester
+                  </option>
+                ))}
+                {userInfo.role === "admin" && (
+                  <>
+                    <option value="add">Add Semester</option>
+                    <option value="edit">Edit Semester</option>
+                  </>
+                )}
+              </select>
+
+              <button
+                style={{
+                  height: "80%",
+                  border: "none",
+                  fontSize: "15px",
+                  color: "white",
+                  backgroundColor: "#2b9447",
+                  borderRadius: "4px",
+                  padding: "0 10px",
+                }}
+                onClick={handelNotifyAll}
+              >
+                Notify all
+              </button>
             </div>
           </div>
           {loading ? (
-            <div>Loading students...</div>
+            <OvalLoader />
           ) : (
             <DataTable
               columns={columns}

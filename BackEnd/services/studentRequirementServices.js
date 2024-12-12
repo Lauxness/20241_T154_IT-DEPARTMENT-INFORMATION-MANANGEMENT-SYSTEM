@@ -23,27 +23,21 @@ const drive = google.drive({
   version: "v3",
   auth: oAuth2Client,
 });
-
-const viewRequirements = (req, res) => {
-  res.send(console.log(id));
-};
 const uploadImage = async (req, res) => {
   const studentId = req.params.id;
-  const { id } = req.user; // Officer ID
+  const id = req.user.id;
   const requirementName = req.body.requirementName;
-  console.log("Requirement Name:", requirementName);
-  const filepath = req.file.path;
+
   const session = await mongoose.startSession();
   session.startTransaction();
-
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded!" });
+  }
+  const filepath = req.file.path;
   try {
     const student = await Student.findById(studentId).session(session);
     if (!student) {
-      throw new Error("Student not found");
-    }
-
-    if (!req.file) {
-      throw new Error("No file uploaded");
+      return res.status(404).json({ message: "Student not found!" });
     }
 
     const response = await drive.files.create({
@@ -76,10 +70,9 @@ const uploadImage = async (req, res) => {
       [requirement],
       { session }
     );
-
     student.requirements.push(uploadedRequirement._id);
     if (student.requirements.length >= 5) {
-      student.status = "Complete";
+      student.isComplete = true;
     }
 
     await student.save({ session });
@@ -95,19 +88,12 @@ const uploadImage = async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
 
-    console.error("Error uploading file:", error);
-    res.status(500).send({
-      message: `Error uploading file: ${
-        error.response ? error.response.data.error.message : error.message
-      }`,
+    res.status(500).json({
+      message: `Internal Server Error!`,
     });
   } finally {
     session.endSession();
-    try {
-      fs.unlinkSync(filepath);
-    } catch (unlinkError) {
-      console.error("Error removing file:", unlinkError);
-    }
+    fs.unlinkSync(filepath);
     await unlockStudent(studentId);
   }
 };
@@ -135,22 +121,24 @@ const generatePublicUrlForFile = async (fileID) => {
 const updateRequirement = async (req, res) => {
   const requirementId = req.params.reqId;
   const studentId = req.params.studentId;
-  const { id } = req.user;
+  const id = req.user.id;
   const requirementName = req.body.requirementName;
-  console.log("Requirement Id", requirementId);
-  console.log("Student Id", requirementName);
-  const filepath = req.file.path;
+
   const session = await mongoose.startSession();
   session.startTransaction();
-
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded!" });
+  }
+  const filepath = req.file.path;
   try {
     const requirement = await studentRequirement.findById({
       _id: requirementId,
     });
-    console.log(requirement.fileId);
+
     if (!requirement) {
-      return res.status(404).json({ message: "Requirement not found" });
+      return res.status(404).json({ message: "Requirement Not Found" });
     }
+
     const student = await Student.findById({ _id: studentId });
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
@@ -168,6 +156,7 @@ const updateRequirement = async (req, res) => {
         body: fs.createReadStream(filepath),
       },
     });
+    console.log(response);
     const fileData = await generatePublicUrlForFile(response.data.id);
     const { webContentLink, webViewLink, thumbnailLink } = fileData;
 
@@ -189,6 +178,7 @@ const updateRequirement = async (req, res) => {
       { session }
     );
     const fileId = requirement.fileId;
+    console.log("adshfajkshfajksdhfajkshfajksfhsakjdfhajksfhaskdfadhjksf");
     if (deleteFromDrive(fileId)) {
       const logEntry = {
         operation: "update",
@@ -205,19 +195,21 @@ const updateRequirement = async (req, res) => {
   } catch (error) {
     console.log(error);
     await session.abortTransaction();
-    return res.status(501).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" });
   } finally {
     await unlockStudent(id);
     session.endSession();
-    fs.unlinkSync(filepath);
+    if (filepath) {
+      fs.unlinkSync(filepath);
+    }
   }
 };
 
 const deleteRequirementImage = async (req, res) => {
   const studentID = req.params.id;
   const requirementId = req.params.reqId;
-  console.log(requirementId);
-  const { id } = req.user;
+  console.log("requirement ID", requirementId);
+  const id = req.user.id;
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -247,7 +239,7 @@ const deleteRequirementImage = async (req, res) => {
       .populate("requirements")
       .session(session);
     if (updatedStudent.requirements.length < 5) {
-      updatedStudent.status = "Incomplete";
+      updatedStudent.isComplete = false;
       await updatedStudent.save({ session });
     }
     const logEntry = {
@@ -258,15 +250,15 @@ const deleteRequirementImage = async (req, res) => {
     };
     await activityLog.create([logEntry], { session });
     await session.commitTransaction();
-    res
+    return res
       .status(200)
-      .json({ message: "Requirement has been deleted and status updated!" });
+      .json({
+        message: "Requirement has been deleted and Requirement status updated!",
+      });
   } catch (error) {
     await session.abortTransaction();
     console.error("Error during requirement deletion:", error);
-    res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    return res.status(500).json({ message: "Internal Server Error" });
   } finally {
     await unlockStudent(studentID);
     session.endSession();
@@ -287,7 +279,6 @@ const deleteFromDrive = async (fileId) => {
 };
 
 module.exports = {
-  viewRequirements,
   uploadImage,
   updateRequirement,
   deleteRequirementImage,

@@ -18,7 +18,7 @@ function RefreshHandler({ setIsAuthenticated }) {
       setIsAuthenticated(false);
       navigate("/", { replace: true });
     }
-  }, [location, navigate, setIsAuthenticated]);
+  }, []);
 
   return null;
 }

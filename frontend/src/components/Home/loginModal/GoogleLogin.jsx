@@ -32,6 +32,7 @@ function GoogleLogin(props) {
       return showSwal("Google authentication failed");
     }
     setIsLoading(true);
+    console.log(code);
     try {
       const result = await googleAuth(code);
       const {

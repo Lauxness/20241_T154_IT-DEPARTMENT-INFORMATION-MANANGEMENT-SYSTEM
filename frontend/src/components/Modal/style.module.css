@@ -17,7 +17,7 @@
   flex-direction: column;
 
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   text-align: center;
   border-radius: 2px;
   animation-name: popup;
@@ -63,7 +63,7 @@
 }
 .label {
   font-size: 15px;
-  width: 160px;
+  width: 190px;
   text-align: start;
 }
 .input {

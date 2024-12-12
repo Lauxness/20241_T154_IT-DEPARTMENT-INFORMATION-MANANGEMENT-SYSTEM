@@ -27,8 +27,8 @@ function Dashboard() {
 
         const totals = {
           totalStudents: students.length,
-          totalComplete: students.filter((s) => s.status === "Complete").length,
-          totalIncomplete: students.filter((s) => s.status === "Incomplete")
+          totalComplete: students.filter((s) => s.isComplete === true).length,
+          totalIncomplete: students.filter((s) => s.isComplete === false)
             .length,
           totalFirstYear: students.filter((s) => s.year === "1st Year").length,
           totalSecondYear: students.filter((s) => s.year === "2nd Year").length,
@@ -60,50 +60,42 @@ function Dashboard() {
     height: "calc(100vh - 135px)",
     width: "100%",
   };
-  if (loading) {
-    return (
-      <div
-        style={{
-          height: "100vh",
-          width: "100vw",
-          position: "relative",
-        }}
-      >
-        <OvalLoader color="white" />
-      </div>
-    );
-  } else {
-    return (
-      <>
-        <Header />
-        <Upperbar
+
+  return (
+    <>
+      <Header />
+      <Upperbar
+        userInfo={userInfo}
+        currentPage="Dashboard"
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+      />
+      <div style={containerStyle}>
+        <SidebarComponent
           userInfo={userInfo}
-          currentPage="Dashboard"
+          currentPage="chart"
           collapsed={collapsed}
-          setCollapsed={setCollapsed}
         />
-        <div style={containerStyle}>
-          <SidebarComponent
-            userInfo={userInfo}
-            currentPage="chart"
-            collapsed={collapsed}
-          />
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-              marginLeft: "10px",
-              marginTop: "5px",
-            }}
-          >
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            marginLeft: "10px",
+            marginTop: "5px",
+            position: "relative",
+          }}
+        >
+          {loading ? (
+            <OvalLoader />
+          ) : (
             <DashboardContent dashboardData={dashboardData} />
-          </div>
+          )}
         </div>
-      </>
-    );
-  }
+      </div>
+    </>
+  );
 }
 
 export default Dashboard;

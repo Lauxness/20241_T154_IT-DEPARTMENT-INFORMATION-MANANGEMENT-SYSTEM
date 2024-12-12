@@ -33,6 +33,10 @@ const accountSchema = new Schema(
     assignedProgram: {
       type: String,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );

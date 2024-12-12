@@ -7,8 +7,9 @@ import Header from "../components/Header/Header";
 import SidebarComponent from "../components/Sidebar/sideBar";
 import SearchBar from "material-ui-search-bar";
 import OvalLoader from "../components/loader/OvalLoader";
+import TimeLine from "../components/Timelines/Timelines";
 import Upperbar from "../components/Upperbar/Upperbar";
-import { format } from "date-fns";
+
 function Home() {
   const [userInfo, setUserInfo] = useState({});
   const [searchForActivity, setSearchForActivity] = useState([]);
@@ -16,7 +17,7 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-  const fetchStudents = async () => {
+  const fetchActivities = async () => {
     const data = localStorage.getItem("user-info");
     const userData = JSON.parse(data);
 
@@ -52,58 +53,33 @@ function Home() {
   };
 
   useEffect(() => {
-    fetchStudents();
+    fetchActivities();
   }, []);
-
-  const columns = [
-    {
-      name: "Officer Name",
-      selector: (row) => row.officer.name,
-      sortable: true,
-    },
-    { name: "Operation", selector: (row) => row.operation, sortable: true },
-    {
-      name: "Details",
-      selector: (row) => row.details,
-      sortable: true,
-      description: true,
-    },
-    {
-      name: "Date",
-      selector: (row) => format(new Date(row.createdAt), "yyyy-MM-dd"),
-      sortable: true,
-    },
-    {
-      name: "Time",
-      selector: (row) => format(new Date(row.createdAt), "HH:mm:ss"),
-      sortable: true,
-    },
-    {
-      name: "Student ID",
-      selector: (row) => row.student.studentId,
-      sortable: true,
-    },
-    {
-      name: "Student Name",
-      selector: (row) => row.student.studentName,
-      sortable: true,
-    },
-  ];
 
   const searchHandler = (e) => {
     if (e === "") {
-      setSearchForStudent(activityData);
+      setSearchForActivity(activityData);
       return;
     }
-    const filteredData = activityData.filter((row) => {
-      if (!isNaN(e)) {
-        return row.studentId.toString().includes(e.toString());
-      } else {
-        return row.studentName.toLowerCase().includes(e.toLowerCase());
-      }
-    });
+    const filteredData = Object.entries(activityData).reduce(
+      (acc, [date, logs]) => {
+        if (date.includes(e)) {
+          acc[date] = logs;
+        } else {
+          const filteredLogs = logs.filter((log) => {
+            return false;
+          });
+          if (filteredLogs.length > 0) {
+            acc[date] = filteredLogs;
+          }
+        }
+        return acc;
+      },
+      {}
+    );
 
-    setSearchForStudent(filteredData);
+    setSearchForActivity(filteredData);
+    console.log("Filtered Data:", filteredData);
   };
 
   const containerStyle = {
@@ -136,7 +112,8 @@ function Home() {
             flexDirection: "column",
             gap: "10px",
             marginLeft: "20px",
-            marginTop: "5px",
+
+            position: "relative",
           }}
         >
           <div
@@ -159,6 +136,7 @@ function Home() {
               }}
             >
               <SearchBar
+                placeholder="Search for date format (YYYY-MM-DD)"
                 onChange={(e) => searchHandler(e)}
                 style={{
                   boxShadow: "0px 1px 2px rgba(141, 192, 247,5)",
@@ -170,16 +148,9 @@ function Home() {
             </div>
           </div>
           {loading ? (
-            <div>Loading activities...</div>
+            <OvalLoader />
           ) : (
-            <DataTable
-              columns={columns}
-              data={searchForActivity}
-              fixedHeader
-              pagination
-              highlightOnHover
-              pointerOnHover
-            />
+            <TimeLine groupedLogs={searchForActivity} />
           )}
         </div>
       </div>

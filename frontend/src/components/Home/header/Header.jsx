@@ -1,5 +1,4 @@
 import { useState } from "react";
-import BukSuLogo from "../../../assets/BukSuLogo.png";
 import COTLogo from "../../../assets/COTLogo.png";
 import LoginModal from "../loginModal/LoginModal";
 import "./style.css";
@@ -40,7 +39,6 @@ function Header(props) {
           setIsAuthenticated={props.setIsAuthenticated}
         />
         <div className="project-name">
-          <img src={BukSuLogo} alt="Buksu logo" />
           <img src={COTLogo} alt="COT logo" />
           <p>IT DEPARTMENT INFORMATION MANAGEMENT SYSTEM</p>
         </div>

@@ -31,7 +31,12 @@ function Upperbar(props) {
           flex: "1",
         }}
       >
-        <MdMenu fontSize="30px" color="#2d55fb" onClick={collapseHandler} />
+        <MdMenu
+          fontSize="30px"
+          color="#2d55fb"
+          onClick={collapseHandler}
+          cursor="pointer"
+        />
         <p
           style={{
             fontSize: "20px",

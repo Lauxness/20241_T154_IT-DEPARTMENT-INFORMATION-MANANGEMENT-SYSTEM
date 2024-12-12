@@ -1,0 +1,40 @@
+.container {
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 255, 0.201);
+  box-shadow: 0 0 5px 1px rgba(0, 0, 255, 0.129);
+  height: 100%;
+}
+.notificationContainer {
+  width: 100%;
+  display: flex;
+  gap: 2px;
+  height: 100%;
+  overflow-y: scroll;
+  flex-direction: column;
+  scrollbar-width: none;
+}
+.notifCard {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  background-color: #2d56fb0b;
+  padding: 10px 15px;
+  border: 1px solid #2d56fb20;
+  gap: 10px;
+  transition: all 100ms;
+}
+.notifCard:hover {
+  background-color: #2d56fb19;
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+}
+
+.heading > p {
+  font-weight: 500;
+  font-size: 14px;
+}
+.message {
+  font-size: 12px;
+}

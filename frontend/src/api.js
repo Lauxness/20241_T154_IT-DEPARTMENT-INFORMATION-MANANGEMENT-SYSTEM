@@ -20,9 +20,11 @@ api.interceptors.request.use(
 );
 export const googleAuth = (code) => api.get(`/index/login/oauth?code=${code}`);
 export const getAllStudents = () => api.get("/home/");
+export const getStudentBySemester = (parameter) =>
+  api.get(`/home/${parameter}`);
 export const getAllArchivedStudents = () => api.get("/students/");
 export const getStudent = (id) => api.get(`/students/${id}`);
-export const deleteStudent = (id) => api.delete(`/students/${id}`);
+export const archiveStudent = (id) => api.patch(`/students/archive/${id}`);
 export const restoreStudent = (id) => api.patch(`/students/restore/${id}`);
 export const unlockStudent = (id) => api.patch(`/students/unlock/${id}`);
 export const addStudent = (studentData) =>
@@ -37,6 +39,7 @@ export const updateEnrollmentOfficer = (officerData, id) =>
   api.patch(`/dashboard/enrollment_officer/${id}`, officerData);
 export const deleteOfficer = (id) =>
   api.delete(`/dashboard/enrollment_officer/${id}`);
+export const generateReport = () => api.get(`/dashboard/generate_report`);
 export const getDashBoard = () => api.get("/dashboard/");
 export const uploadFile = (id, requirementData) => {
   return api.post(
@@ -58,3 +61,12 @@ export const updateRequirement = (id, reqId, requirementData) =>
     },
   });
 export const getAllActivities = () => api.get(`/activity/logs`);
+export const getNotifications = () => api.get(`/notification/`);
+export const notifyStudent = (id) => api.post(`/notification/notify/${id}`);
+export const notifyAllStudents = () => api.post(`/notification/notify/`);
+export const addNewSemester = (semester) =>
+  api.post(`/home/semester/add`, semester);
+export const editSemester = (id, semester) =>
+  api.patch(`/home/semester/${id}`, semester);
+export const addAdmin = (id) =>
+  api.patch(`/dashboard/enrollment_officer/add_admin/${id}`);

@@ -55,13 +55,14 @@ function OfficerModal(props) {
         showSwal(true, response.data.message);
       } else {
         showSwal(false, response.data.message, response.status);
+        console.log("error", response.data.message);
       }
     } catch (error) {
       const message =
         error.response?.data?.message ||
         error.message ||
         "An unexpected error occurred";
-      console.error("Error:", message);
+      console.error("Error:", error);
       showSwal(false, message);
     } finally {
       setIsLoading(false);

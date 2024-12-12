@@ -15,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import ArchivesStudents from "./pages/ArchivesStudents";
 import FaQPage from "./pages/FaQ";
 import ActivityLogs from "./pages/ActivityLogs";
+import Notifications from "./pages/Notifications";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const PrivateRoute = ({ element }) => {
@@ -45,6 +46,10 @@ function App() {
         <Route
           path="/activity_logs"
           element={<PrivateRoute element={<ActivityLogs />} />}
+        />
+        <Route
+          path="/notifications"
+          element={<PrivateRoute element={<Notifications />} />}
         />
         <Route path="/faq" element={<PrivateRoute element={<FaQPage />} />} />
         <Route path="*" element={<PageNotFound />} />

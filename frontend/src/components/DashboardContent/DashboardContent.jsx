@@ -3,7 +3,6 @@ import Officer from "../../assets/dashboard/Officer.png";
 import Student from "../../assets/dashboard/student.png";
 import Requirement from "../../assets/dashboard/requirements.png";
 import Complete from "../../assets/dashboard/complete.png";
-import { useState } from "react";
 import HorizontalBarChart from "../charts/HorizontalBarChart";
 import DoughnutChart from "../charts/DoughnutChart";
 import BarChart from "../charts/BarChart";
@@ -66,7 +65,7 @@ function DashboardContent(props) {
       </div>
       <div className={styles.chartContainer}>
         <div className={styles.donnutChart}>
-          <p>Student completion summary</p>
+          <p>Requirements completion summary</p>
           <div>
             <DoughnutChart
               totalIncomplete={props.dashboardData?.totalIncomplete}

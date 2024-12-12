@@ -12,7 +12,6 @@ function RequirementsPopup(props) {
   const [loading, setLoading] = useState(false);
   const [studentRequirements, setStudentRequirements] = useState([]);
 
-  // Default requirements
   const defaultRequirements = [
     {
       requirementName: "Certificate of Good Moral",
@@ -73,6 +72,13 @@ function RequirementsPopup(props) {
   }, [props.studentData]);
 
   const handleImageChange = async (e, requirementName) => {
+    if (props.selectedSemester !== props.currentSemester) {
+      return Swal.fire(
+        "Sorry",
+        "You cant perform that here you need to be in the latest semester.",
+        "error"
+      );
+    }
     const file = e.target.files[0];
     setLoading(true);
     if (!file) {
@@ -97,6 +103,13 @@ function RequirementsPopup(props) {
     }
   };
   const handleImageChangeUpdate = async (e, reqId, requirementName) => {
+    if (props.selectedSemester !== props.currentSemester) {
+      return Swal.fire(
+        "Sorry",
+        "You cant perform that here you need to be in the latest semester.",
+        "error"
+      );
+    }
     const file = e.target.files[0];
     setLoading(true);
     if (!file) {
@@ -135,6 +148,13 @@ function RequirementsPopup(props) {
   };
 
   const showDeleteSwal = async (studentData, reqData) => {
+    if (props.selectedSemester !== props.currentSemester) {
+      return Swal.fire(
+        "Sorry",
+        "You cant perform that here you need to be in the latest semester.",
+        "error"
+      );
+    }
     Swal.fire({
       title: "Continue?",
       text: "This file will be removed permanently!",
@@ -149,7 +169,7 @@ function RequirementsPopup(props) {
         if (isDeleted.status === 200) {
           showSwal(true, isDeleted.data.message);
         } else {
-          showSwal(true, isDeleted.data.message);
+          showSwal(false, isDeleted.data.message);
         }
       }
     });
@@ -176,6 +196,8 @@ function RequirementsPopup(props) {
           <Profile
             triggerRequirements={props.triggerRequirements}
             studentData={props.studentData}
+            selectedSemester={props.selectedSemester}
+            currentSemester={props.currentSemester}
           />
           <div className={styles.rightSide}>
             <div className={styles.header}>

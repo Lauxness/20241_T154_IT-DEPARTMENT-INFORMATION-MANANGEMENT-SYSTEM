@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import GoogleButton from "react-google-button";
 import GoogleLogin from "./GoogleLogin";
 import { Oval } from "react-loader-spinner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -24,18 +23,11 @@ function LoginModal(props) {
   const captchaCheck = () => {
     if (captchaVerified) {
       setCaptchaVerified(false);
-      console.log("asdfasdf");
     } else {
       setCaptchaVerified(true);
-      console.log("asdfasdf");
     }
   };
-  const updateCaptcha = (val) => {
-    setCaptcha(val);
-  };
-
-  const continueWithGoogle = async (val) => {
-    updateCaptcha(val);
+  const captchaHandler = async (val) => {
     const url = "http://localhost:8000/index/verifyCaptcha";
     try {
       setIsLoading(true);
@@ -47,7 +39,6 @@ function LoginModal(props) {
         },
         body: JSON.stringify({ captcha: val }),
       });
-      console.log(val);
       const data = await response.json();
       console.log(data.success);
       if (data.success) {
@@ -74,7 +65,7 @@ function LoginModal(props) {
         <h2>Sign in with Google</h2>
         <ReCAPTCHA
           sitekey="6LcjQm0qAAAAADIuGQVgIIlFR_rtgpm0dcad97ly"
-          onChange={continueWithGoogle}
+          onChange={captchaHandler}
         />
         {isLoading ? (
           <Oval

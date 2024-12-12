@@ -1,9 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { notifyStudent } = require("../services/notificationServices");
+const {
+  notifyStudent,
+  getNotifications,
+  notifyAllStudents,
+} = require("../services/notificationServices");
 
-router.post("/notify", (req, res) => {
-  notifyStudent(req, res);
-});
-
+router.post("/notify/:id", notifyStudent);
+router.get("/", getNotifications);
+router.post("/notify", notifyAllStudents);
 module.exports = router;

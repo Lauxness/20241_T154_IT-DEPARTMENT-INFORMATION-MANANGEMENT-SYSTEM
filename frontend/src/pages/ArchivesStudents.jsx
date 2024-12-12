@@ -185,7 +185,8 @@ function Home() {
             flexDirection: "column",
             gap: "10px",
             marginLeft: "20px",
-            marginTop: "5px",
+
+            position: "relative",
           }}
         >
           <div
@@ -219,7 +220,7 @@ function Home() {
             </div>
           </div>
           {loading ? (
-            <div>Loading students...</div>
+            <OvalLoader />
           ) : (
             <DataTable
               columns={columns}

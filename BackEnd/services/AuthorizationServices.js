@@ -5,7 +5,6 @@ const Authorization = (req, res, next) => {
 
   if (authHeader && authHeader.startsWith("Bearer ")) {
     const token = authHeader.split(" ")[1];
-
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
         console.log("Invalid token:", err.message);

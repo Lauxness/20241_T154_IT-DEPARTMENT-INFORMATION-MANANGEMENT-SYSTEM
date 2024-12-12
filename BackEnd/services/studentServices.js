@@ -1,15 +1,26 @@
 const Student = require("../models/studentModel");
 const mongoose = require("mongoose");
+const Semester = require("../models/schoolYearModel");
 const activityLog = require("../models/activitiesModel");
 const { unlockStudent } = require("../utils/unlockStudent");
 const getAllStudents = async (req, res) => {
+  console.log(req.user);
+  /*   const role = req.user.role;
+   const parameter = req.params.semester; */
   try {
-    const students = await Student.find({ isArchived: true });
+    const semesterStudents = await Semester.find()
+      .sort({ createdAt: -1 })
+      .populate("students");
+    if (!semesterStudents) {
+      return res.status(404).json({ message: "Semester not found" });
+    }
+    const students = semesterStudents[0].students.filter(
+      (student) => student.isArchived === true
+    );
     return res.status(200).json(students);
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error fetching students", error: error.message });
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -49,28 +60,37 @@ const selectStudent = async (req, res) => {
 const updateStudent = async (req, res) => {
   const studentId = req.params.id;
   const updatedData = req.body;
-  const officerId = req.user.id; // Assuming req.user contains the officer's details
+  const officerId = req.user.id;
+  const { email, phoneNumber } = updatedData;
+  if (!email || !/^[a-zA-Z0-9._%+-]+@student\.buksu\.edu\.ph$/.test(email)) {
+    return res.status(400).json({ message: "Email Address is not valid" });
+  }
+  if (!phoneNumber || !/^(?:\+63|63|0)9\d{9}$/.test(phoneNumber)) {
+    return res.status(400).json({ message: "Phone number is not valid" });
+  }
+
   const session = await mongoose.startSession();
   session.startTransaction();
-
   try {
     const updatedStudent = await Student.findByIdAndUpdate(
       studentId,
       updatedData,
-      { new: true, session } // Use session for transaction
+      { new: true, session }
     );
 
     if (!updatedStudent) {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    console.log("Updated Student:", updatedStudent);
+    const date = new Date(updatedStudent.updatedAt);
+
+    const time = date.toTimeString().split(" ")[0];
 
     const logEntry = {
       operation: "update",
       student: updatedStudent._id,
       officer: officerId,
-      details: "Updated student information",
+      details: `Updated student information`,
     };
 
     await activityLog.create([logEntry], { session });
@@ -84,8 +104,7 @@ const updateStudent = async (req, res) => {
     await session.abortTransaction();
     console.error("Error updating student:", error);
     res.status(500).json({
-      message: "Failed to update student",
-      error: error.message,
+      message: "Internal Server Error",
     });
   } finally {
     session.endSession();
@@ -94,10 +113,9 @@ const updateStudent = async (req, res) => {
 
 const archiveStudent = async (req, res) => {
   const userId = req.params.id;
-  const { id: officerId } = req.user;
+  const officerId = req.user.id;
   const session = await mongoose.startSession();
   session.startTransaction();
-
   try {
     const user = await Student.findByIdAndUpdate(
       userId,
@@ -110,7 +128,6 @@ const archiveStudent = async (req, res) => {
       session.endSession();
       return res.status(404).json({ message: "Student not found" });
     }
-
     const logEntry = {
       operation: "archive",
       student: user._id,
@@ -121,21 +138,19 @@ const archiveStudent = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    res
-      .status(200)
-      .json({ message: "Student has been moved to Archives.", user });
+    res.status(200).json({ message: "Student has been moved to Archives." });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
 
     console.error("Error archiving student:", error);
-    res.status(500).json({ message: "Error archiving student.", error });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 const restoreStudent = async (req, res) => {
   const userId = req.params.id;
-  const { id: officerId } = req.user;
+  const officerId = req.user.id;
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -171,19 +186,19 @@ const restoreStudent = async (req, res) => {
     session.endSession();
 
     console.error("Error restoring student:", error);
-    res.status(500).json({ message: "Error restoring student.", error });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 const unlock = async (req, res) => {
   const id = req.params.id;
-  console.log("asdfasdfsafsdf");
   try {
     const result = await unlockStudent(id);
 
-    if (result) {
-      return res.status(204);
+    if (!result) {
+      return res.status(404).json({ messge: "Student not found!" });
     }
+    return res.status(204).json({ messge: "Student unlocked!" });
   } catch (err) {
     console.log(err);
     return res.status(501).json({ message: "Internal Server Error" });

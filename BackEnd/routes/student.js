@@ -10,24 +10,12 @@ const {
   archiveStudent,
 } = require("../services/studentServices");
 
-router.get("/", (req, res) => {
-  getAllStudents(req, res);
-});
-router.get("/:id", (req, res) => {
-  selectStudent(req, res);
-});
-router.patch("/:id", (req, res) => {
-  updateStudent(req, res);
-});
-router.delete("/:id", (req, res) => {
-  archiveStudent(req, res);
-});
-router.patch("/restore/:id", (req, res) => {
-  restoreStudent(req, res);
-});
-router.patch("/unlock/:id", (req, res) => {
-  unlock(req, res);
-});
+router.get("/", getAllStudents);
+router.get("/:id", selectStudent);
+router.patch("/:id", updateStudent);
+router.patch("/archive/:id", archiveStudent);
+router.patch("/restore/:id", restoreStudent);
+router.patch("/unlock/:id", unlock);
 
 router.use("/requirements", requirementsRoute);
 

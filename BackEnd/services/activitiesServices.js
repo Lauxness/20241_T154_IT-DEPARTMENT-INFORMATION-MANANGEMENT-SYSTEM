@@ -3,18 +3,18 @@ const activityLog = require("../models/activitiesModel");
 const getAllActivities = async (req, res) => {
   const role = req.user.role;
   try {
+    let activityLogs;
+
     if (role === "admin") {
-      const activityLogs = await activityLog
+      activityLogs = await activityLog
         .find()
         .populate("student", "studentName studentId")
         .populate("officer", "name")
         .sort({ createdAt: -1 })
         .exec();
-
-      return res.status(200).json(activityLogs);
     } else if (role === "officer") {
       const officerId = req.user.id;
-      const activityLogs = await activityLog
+      activityLogs = await activityLog
         .find({ officer: officerId })
         .populate("student", "studentName studentId")
         .populate("officer", "name")
@@ -26,10 +26,19 @@ const getAllActivities = async (req, res) => {
           .status(204)
           .json({ message: "No activity logs found for this officer" });
       }
-      return res.status(200).json(activityLogs);
     }
+    const groupedLogs = activityLogs.reduce((group, log) => {
+      const date = log.createdAt.toISOString().split("T")[0];
+      if (!group[date]) {
+        group[date] = [];
+      }
+      group[date].push(log);
+      return group;
+    }, {});
+
+    return res.status(200).json(groupedLogs);
   } catch (err) {
-    console.error("Error fetching officer activity logs:", err);
+    console.error("Error fetching activity logs:", err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

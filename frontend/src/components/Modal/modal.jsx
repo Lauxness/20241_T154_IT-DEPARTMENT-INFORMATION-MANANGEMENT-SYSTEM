@@ -12,6 +12,8 @@ function Modal(props) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [program, setProgram] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState();
+  const [semesterGWA, setSemesterGWA] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
     if (props.trigger) {
@@ -21,10 +23,11 @@ function Modal(props) {
       setEmail(props.initialStudentData.email || "");
       setPhoneNumber(props.initialStudentData.phoneNumber || "");
       setProgram(props.initialStudentData.program || "");
+      setStatus(props.initialStudentData.status || "");
+      setSemesterGWA(props.initialStudentData.semesterGWA || "");
     }
   }, [props.trigger, props.initialStudentData]);
 
-  console.log("asdfasdfsadf", props.initialStudentData);
   const handleClose = () => {
     if (props.initialStudentData._id !== undefined) {
       console.log("click");
@@ -44,6 +47,8 @@ function Modal(props) {
       email,
       phoneNumber,
       program,
+      semesterGWA,
+      ...(status && { status }),
     };
 
     try {
@@ -63,7 +68,7 @@ function Modal(props) {
       } else {
         console.log("add");
         response = await addStudent(newStudent);
-        if (response.status === 201) {
+        if (response.status === 200) {
           handleClose();
           setIsLoading(false);
           showSwal(true, response.data.message, response.status);
@@ -159,6 +164,22 @@ function Modal(props) {
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
           </div>
+          {status ? (
+            <div className={styles.inputGroup}>
+              <label className={styles.label}>Status </label>
+              <select
+                className={styles.input}
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="Regular">Regular</option>
+                <option value="Irregular">Irregular</option>
+                <option value="LOA">LOA</option>
+              </select>
+            </div>
+          ) : (
+            ""
+          )}
           <div className={styles.inputGroup}>
             <label className={styles.label}>Program: </label>
             <select
@@ -170,6 +191,14 @@ function Modal(props) {
               <option value="BSIT">BSIT</option>
               <option value="BSEMC">BSEMC</option>
             </select>
+          </div>
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>GWA</label>
+            <input
+              className={styles.input}
+              value={semesterGWA}
+              onChange={(e) => setSemesterGWA(e.target.value)}
+            />
           </div>
           <div className={styles.inputGroup}>
             <label className={styles.label}>Year: </label>

@@ -4,6 +4,7 @@ const {
   deleteEnrollmentOfficer,
   updateEnrollmentOfficer,
   searchEnrollmentOfficer,
+  addAdmin,
 } = require("../services/adminServices");
 const router = express.Router();
 
@@ -18,6 +19,9 @@ router.get("/:id", (req, res) => {
 });
 router.patch("/:id", (req, res) => {
   updateEnrollmentOfficer(req, res);
+});
+router.patch("/add_admin/:id", (req, res) => {
+  addAdmin(req, res);
 });
 
 module.exports = router;

@@ -5,7 +5,9 @@ const {
   getDashboard,
   getEnrollmentOfficer,
   generateReport,
+  addAdmin,
 } = require("../services/dashboardServices");
+const { generatePostInspectionPdf } = require("../utils/pdf");
 
 router.get("/", (req, res) => {
   getDashboard(req, res);
@@ -13,11 +15,8 @@ router.get("/", (req, res) => {
 router.get("/enrollment_officer", (req, res) => {
   getEnrollmentOfficer(req, res);
 });
-router.post("/generate_report", (req, res) => {
-  generateReport(req, res);
-});
+router.get("/generate_report", generatePostInspectionPdf);
 
 router.use("/enrollment_officer", adminRoute);
-router.use("/logout", () => {});
 
 module.exports = router;

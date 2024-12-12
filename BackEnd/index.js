@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const loginRoute = require("./routes/login");
 const homeRoute = require("./routes/home");
 const dashboardRoute = require("./routes/dashboard");
-const messageStudentRoute = require("./routes/messageStudent");
 const notificationRoute = require("./routes/notification");
 const studentRoute = require("./routes/student");
 const activityRoute = require("./routes/activities");
@@ -26,11 +25,9 @@ app.use("/home", Authorization, homeRoute);
 //search and view,delete,update and add student info
 app.use("/students", Authorization, studentRoute);
 //notifications
-app.use("/notification", notificationRoute);
+app.use("/notification", Authorization, notificationRoute);
 //message student
 app.use("/activity", Authorization, activityRoute);
-//message student
-app.use("/message", Authorization, messageStudentRoute);
 //dashboard
 app.use("/dashboard", Authorization, dashboardRoute);
 //google
