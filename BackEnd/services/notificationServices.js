@@ -54,9 +54,7 @@ const notifyStudent = async (req, res) => {
     const missingRequirements = defaultRequirements.filter(
       (req) => !student.requirements.some((r) => r.requirementName === req)
     );
-    console.log("Missing Requirements:", missingRequirements);
     const message = `Requirements reminder.`;
-    console.log(message);
     const messageType = "ARN";
 
     await sendEmail(student.email, missingRequirements, student.studentName);
