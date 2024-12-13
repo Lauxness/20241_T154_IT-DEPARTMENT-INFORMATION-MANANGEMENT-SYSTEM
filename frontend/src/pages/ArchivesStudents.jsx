@@ -8,7 +8,7 @@ import SidebarComponent from "../components/Sidebar/sideBar";
 import SearchBar from "material-ui-search-bar";
 import OvalLoader from "../components/loader/OvalLoader";
 import Upperbar from "../components/Upperbar/Upperbar";
-import { MdEditSquare, MdRestoreFromTrash, MdArchive } from "react-icons/md";
+import { MdRestoreFromTrash } from "react-icons/md";
 
 function Home() {
   const [userInfo, setUserInfo] = useState({});
@@ -31,26 +31,12 @@ function Home() {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        showSwalTokenExp();
+        RequestLogout();
       }
     } finally {
       setLoading(false);
     }
   };
-
-  const showSwalTokenExp = () => {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Please login first.",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem("user-info");
-        navigate("/");
-      }
-    });
-  };
-
   const showSwal = async (data) => {
     Swal.fire({
       title: "Continue?",
@@ -76,6 +62,16 @@ function Home() {
     fetchStudents();
   }, []);
 
+  const RequestLogout = () => {
+    Swal.fire({
+      icon: "error",
+      title: "Unauthorized",
+      text: "Your Session Expired. Please Login again",
+    }).then(() => {
+      localStorage.removeItem("user-info");
+      navigate("/");
+    });
+  };
   const handleRestore = async (data) => {
     const id = data._id;
     try {

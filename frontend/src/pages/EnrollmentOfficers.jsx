@@ -31,10 +31,11 @@ function Home() {
       const response = await getAllEnrollmentOfficers();
       if (response.status === 200) {
         const data = response.data;
+        console.log(data);
         setOfficers(data);
         setSearchForOfficer(data);
       } else if (response.status == 401) {
-        showSwalTokenExp();
+        RequestLogout();
       }
     } catch (error) {
     } finally {
@@ -49,19 +50,6 @@ function Home() {
     } else {
       setTrigger(true);
     }
-  };
-
-  const showSwalTokenExp = () => {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Your token has expired, Please login again",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem("user-info");
-        navigate("/");
-      }
-    });
   };
 
   const showSwal = async (data) => {
@@ -84,7 +72,13 @@ function Home() {
             }
           );
         } else {
-          showSwalTokenExp();
+          Swal.fire("Error", "Something Went Wrong!", "success").then(
+            (result) => {
+              if (result.isConfirmed) {
+                window.location.reload();
+              }
+            }
+          );
         }
       }
     });

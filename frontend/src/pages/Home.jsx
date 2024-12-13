@@ -50,7 +50,6 @@ function Home() {
         setStudents(data);
         setSearchForStudent(data);
         setSemester(response.data[1]);
-        console.log("asdfashdfadjks", response.data[1]);
         const sem =
           response.data[1][0].schoolYear + " " + response.data[1][0].semester;
         setCurrentSemester(sem);
@@ -59,7 +58,7 @@ function Home() {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        showSwalTokenExp();
+        RequestLogout();
       }
     } finally {
       setLoading(false);
@@ -84,6 +83,16 @@ function Home() {
     } finally {
       setIsLoading(false);
     }
+  };
+  const RequestLogout = () => {
+    Swal.fire({
+      icon: "error",
+      title: "Unauthorized",
+      text: "Your Session Expired. Please Login again",
+    }).then(() => {
+      localStorage.removeItem("user-info");
+      navigate("/");
+    });
   };
   const handleTriggerRequirements = async (data) => {
     if (triggerRequirements) {

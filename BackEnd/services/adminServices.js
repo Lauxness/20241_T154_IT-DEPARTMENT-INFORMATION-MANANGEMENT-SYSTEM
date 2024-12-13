@@ -3,6 +3,8 @@ const nodemailer = require("nodemailer");
 const notification = require("../models/notificationModel");
 const { google } = require("googleapis");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config();
 const addEnrollmentOfficer = async (req, res) => {
   const user = req.user;
   const role = req.user.role;
@@ -26,10 +28,8 @@ const addEnrollmentOfficer = async (req, res) => {
       assignedYear,
       assignedProgram,
     } = req.body;
-
-    if (
-      !(emailAddress && /^[a-zA-Z0-9._%+-]+@buksu\.edu\.ph$/.test(emailAddress))
-    ) {
+    const emailTestRegex = new RegExp(process.env.EMAIL_TEST);
+    if (!(emailAddress && !emailTestRegex.test(emailAddress))) {
       await session.abortTransaction();
       session.endSession();
       return res.status(400).json({ message: "Email Address is not valid" });

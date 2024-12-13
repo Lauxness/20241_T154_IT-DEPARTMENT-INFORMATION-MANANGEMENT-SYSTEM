@@ -5,7 +5,6 @@ import OvalLoader from "../components/loader/OvalLoader";
 import { getDashBoard } from "../api";
 import Upperbar from "../components/Upperbar/Upperbar";
 import DashboardContent from "../components/DashboardContent/DashboardContent";
-
 function Dashboard() {
   const [userInfo, setUserInfo] = useState(null);
   const [dashboardData, setDashBoardData] = useState();
@@ -42,6 +41,9 @@ function Dashboard() {
         console.log(dashboardData);
       }
     } catch (error) {
+      if (error.response.status === 401) {
+        RequestLogout();
+      }
       console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
@@ -60,7 +62,16 @@ function Dashboard() {
     height: "calc(100vh - 135px)",
     width: "100%",
   };
-
+  const RequestLogout = () => {
+    Swal.fire({
+      icon: "error",
+      title: "Unauthorized",
+      text: "Your Session Expired. Please Login again",
+    }).then(() => {
+      localStorage.removeItem("user-info");
+      navigate("/");
+    });
+  };
   return (
     <>
       <Header />

@@ -10,29 +10,29 @@ const studentRoute = require("./routes/student");
 const activityRoute = require("./routes/activities");
 const { Authorization } = require("./services/AuthorizationServices");
 require("./services/googleOAuthServices");
-
 dotenv.config();
-
 const app = express();
 app.use(express.json());
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+app.use(cors(corsOptions));
 const PORT = process.env.PORT;
 
-//landing and login
 app.use("/index", loginRoute);
-//home
-app.use("/home", Authorization, homeRoute);
-//search and view,delete,update and add student info
-app.use("/students", Authorization, studentRoute);
-//notifications
-app.use("/notification", Authorization, notificationRoute);
-//message student
-app.use("/activity", Authorization, activityRoute);
-//dashboard
-app.use("/dashboard", Authorization, dashboardRoute);
-//google
 
-//mongodb connection
+app.use("/home", Authorization, homeRoute);
+
+app.use("/students", Authorization, studentRoute);
+
+app.use("/notification", Authorization, notificationRoute);
+
+app.use("/activity", Authorization, activityRoute);
+
+app.use("/dashboard", Authorization, dashboardRoute);
+
 mongoose
   .connect(process.env.MONGODB)
   .then(() => {

@@ -27,7 +27,7 @@ function DashboardContent(props) {
         </div>
         <div className={styles.card}>
           <div className={styles.imageContainer}>
-            <p>Total students Completed</p>
+            <p>Complete Requirements</p>
             <img src={Complete} alt="" width="30px" />
           </div>
           <div className={styles.dataContainer}>

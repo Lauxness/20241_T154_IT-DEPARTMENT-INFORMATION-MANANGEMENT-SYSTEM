@@ -6,10 +6,12 @@ import {
   MdNotifications,
   MdPerson3,
   MdStackedBarChart,
-  MdSettingsBrightness,
+  MdDownload,
   MdArchive,
   MdQuestionMark,
   MdTimeline,
+  MdAreaChart,
+  MdSupervisorAccount,
 } from "react-icons/md";
 import "./style.css";
 import Swal from "sweetalert2";
@@ -23,7 +25,6 @@ function SidebarComponent(props) {
   const fetchNotifications = async () => {
     const data = localStorage.getItem("user-info");
     const userData = JSON.parse(data);
-
     setUserInfo(userData);
     try {
       const response = await getNotifications();
@@ -125,12 +126,14 @@ function SidebarComponent(props) {
           <MenuItem
             active={props.currentPage === "chart"}
             component={<Link to="/dashboard" />}
+            icon={<MdAreaChart color="#2d55fb" fontSize="20px" />}
           >
             Chart
           </MenuItem>
           <MenuItem
             active={props.currentPage === "generate_report"}
             onClick={() => handleDownload()}
+            icon={<MdDownload color="#2d55fb" fontSize="20px" />}
           >
             Download Report
           </MenuItem>
@@ -139,6 +142,7 @@ function SidebarComponent(props) {
             <MenuItem
               component={<Link to="/enrollment_officers" />}
               active={props.currentPage === "enrollmentOfficers"}
+              icon={<MdSupervisorAccount color="#2d55fb" fontSize="20px" />}
             >
               Enrollment Officers
             </MenuItem>

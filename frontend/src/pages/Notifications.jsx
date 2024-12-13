@@ -5,6 +5,7 @@ import Upperbar from "../components/Upperbar/Upperbar";
 import Notification from "../components/Notification/Notification";
 import { getNotifications } from "../api";
 import OvalLoader from "../components/loader/OvalLoader";
+import Swal from "sweetalert2";
 function Home() {
   const [userInfo, setUserInfo] = useState({});
   const [collapsed, setCollapsed] = useState(false);
@@ -23,9 +24,10 @@ function Home() {
 
         setNotifications(notifs);
       }
-      console.log("asdfsadfsdf", response.status);
     } catch (err) {
-      console.log(err);
+      if (err.response.status == 401) {
+        RequestLogout();
+      }
     } finally {
       setLoading(false);
     }
@@ -34,7 +36,16 @@ function Home() {
     fetchUserInfo();
     fetchNotifications();
   }, []);
-
+  const RequestLogout = () => {
+    Swal.fire({
+      icon: "error",
+      title: "Unauthorized",
+      text: "Your Session Expired. Please Login again",
+    }).then(() => {
+      localStorage.removeItem("user-info");
+      navigate("/");
+    });
+  };
   const containerStyle = {
     display: "flex",
     height: "calc(100vh - 135px)",

@@ -5,8 +5,6 @@ const activityLog = require("../models/activitiesModel");
 const { unlockStudent } = require("../utils/unlockStudent");
 const getAllStudents = async (req, res) => {
   console.log(req.user);
-  /*   const role = req.user.role;
-   const parameter = req.params.semester; */
   try {
     const semesterStudents = await Semester.find()
       .sort({ createdAt: -1 })

@@ -3,7 +3,7 @@ const innovateLogo =
   "https://res.cloudinary.com/dvhfgstud/image/upload/v1733239402/467198922_588876523648635_1569889043517254517_n_nnoyav.jpg";
 const buksuLogo =
   "https://res.cloudinary.com/dvhfgstud/image/upload/v1733117339/buksu-logo-min-1024x1024_ye6b58.png";
-class InspectionPDF {
+module.exports = class ReportPDF {
   constructor() {
     this.doc = new PDFDocument({
       size: "A4",
@@ -13,24 +13,24 @@ class InspectionPDF {
 
   footer(officerName) {
     let startx = 50;
-    let startY = this.doc.page.height - 100;
+    let startY = this.doc.page.height - 125;
     this.doc
       .font("Helvetica")
       .fontSize(12)
-      .text("Marilou O. Espina", startx, startY - 15, {
+      .text("Sales P. Aribe", startx, startY - 15, {
         align: "center",
-        width: 200,
+        width: 150,
       });
     this.doc
       .moveTo(startx, startY)
-      .lineTo(startx + 200, startY)
+      .lineTo(startx + 150, startY)
       .stroke();
     this.doc
       .font("Helvetica")
       .fontSize(10)
-      .text("Department Dean", startx, startY + 5, {
+      .text("Department Head", startx, startY + 5, {
         align: "center",
-        width: 200,
+        width: 150,
       });
 
     this.doc
@@ -38,28 +38,28 @@ class InspectionPDF {
       .fontSize(10)
       .text("(Signature over Printed Name)", startx, startY + 20, {
         align: "center",
-        width: 200,
+        width: 150,
       });
 
-    startx = 350;
-    startY = this.doc.page.height - 100;
+    startx = 400;
+    startY = this.doc.page.height - 125;
     this.doc
       .font("Helvetica")
       .fontSize(12)
       .text(officerName, startx, startY - 15, {
         align: "center",
-        width: 200,
+        width: 150,
       });
     this.doc
       .moveTo(startx, startY)
-      .lineTo(startx + 200, startY)
+      .lineTo(startx + 150, startY)
       .stroke();
     this.doc
       .font("Helvetica")
       .fontSize(10)
       .text("Enrollment Officer", startx, startY + 5, {
         align: "center",
-        width: 200,
+        width: 150,
       });
 
     this.doc
@@ -67,7 +67,36 @@ class InspectionPDF {
       .fontSize(10)
       .text("(Signature over Printed Name)", startx, startY + 20, {
         align: "center",
-        width: 200,
+        width: 150,
+      });
+
+    startx = 220;
+    startY = this.doc.page.height - 85;
+    this.doc
+      .font("Helvetica")
+      .fontSize(12)
+      .text("Marilou O. Espina", startx, startY - 15, {
+        align: "center",
+        width: 150,
+      });
+    this.doc
+      .moveTo(startx, startY)
+      .lineTo(startx + 150, startY)
+      .stroke();
+    this.doc
+      .font("Helvetica")
+      .fontSize(10)
+      .text("Department Dean", startx, startY + 5, {
+        align: "center",
+        width: 150,
+      });
+
+    this.doc
+      .font("Helvetica")
+      .fontSize(10)
+      .text("(Signature over Printed Name)", startx, startY + 20, {
+        align: "center",
+        width: 150,
       });
   }
 
@@ -189,95 +218,4 @@ class InspectionPDF {
 
     return this;
   }
-}
-const Semester = require("../models/schoolYearModel");
-const Requirements = require("../models/requirementsModel");
-async function generatePostInspectionPdf(req, res) {
-  const officerName = req.user.name;
-  try {
-    const date = new Date().toLocaleDateString();
-    const semester = await Semester.find()
-      .sort({ createdAt: -1 })
-      .populate("students");
-    console.log(semester);
-    const currentSemester =
-      "S.Y " +
-      semester[0].schoolYear +
-      " " +
-      semester[0].semester +
-      " Semester";
-    const requirements = await Requirements.find();
-    const students = semester[0].students;
-    const totalStudents = students.length;
-    const totalComplete = students.filter(
-      (student) => student.isComplete === true
-    ).length;
-    const totalIncomplete = students.filter(
-      (student) => student.isComplete === false
-    ).length;
-    const totalRequirements = requirements.length;
-    const totalFirstYear = students.filter(
-      (student) => student.year === "1st Year"
-    ).length;
-    const totalSecondYear = students.filter(
-      (student) => student.year === "2nd Year"
-    ).length;
-    const totalThirdYear = students.filter(
-      (student) => student.year === "3rd Year"
-    ).length;
-    const totalFourthYear = students.filter(
-      (student) => student.year === "4th Year"
-    ).length;
-    const regularStudents = students.filter(
-      (student) => student.status === "Regular"
-    ).length;
-    const irregularStudents = students.filter(
-      (student) => student.status === "Irregular"
-    ).length;
-    const LOA = students.filter((student) => student.status === "LOA").length;
-    const totalBSITStudents = students.filter(
-      (student) => student.program === "BSIT"
-    ).length;
-    const totalBSEMCStudents = students.filter(
-      (student) => student.program === "BSEMC"
-    ).length;
-    const totalArchiveStudents = students.filter(
-      (student) => student.isArchived === true
-    ).length;
-    const pdf = new InspectionPDF();
-    pdf.addHeader(
-      date,
-      currentSemester,
-      totalStudents,
-      totalComplete,
-      totalIncomplete,
-      totalRequirements,
-      totalFirstYear,
-      totalSecondYear,
-      totalThirdYear,
-      totalFourthYear,
-      regularStudents,
-      irregularStudents,
-      LOA,
-      totalBSITStudents,
-      totalBSEMCStudents,
-      totalArchiveStudents
-    );
-    pdf.footer(officerName);
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=student_information_report_summary.pdf"
-    );
-    pdf.doc.pipe(res);
-    pdf.doc.end();
-  } catch (error) {
-    if (!res.headersSent) {
-      res.status(500).json({ message: "Internal Server Error" });
-    }
-  }
-}
-
-module.exports = {
-  generatePostInspectionPdf,
 };

@@ -32,30 +32,27 @@ function Home() {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        showSwalTokenExp();
+        RequestLogout();
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const showSwalTokenExp = () => {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Please login first.",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem("user-info");
-        navigate("/");
-      }
-    });
-  };
-
   useEffect(() => {
     fetchActivities();
   }, []);
 
+  const RequestLogout = () => {
+    Swal.fire({
+      icon: "error",
+      title: "Unauthorized",
+      text: "Your Session Expired. Please Login again",
+    }).then(() => {
+      localStorage.removeItem("user-info");
+      navigate("/"); // Navigate after alert
+    });
+  };
   const searchHandler = (e) => {
     if (e === "") {
       setSearchForActivity(activityData);

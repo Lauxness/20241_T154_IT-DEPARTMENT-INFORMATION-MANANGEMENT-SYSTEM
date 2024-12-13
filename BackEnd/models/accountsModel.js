@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const { encrypt, decrypt } = require("../utils/Encryption");
 const Schema = mongoose.Schema;
 
 const accountSchema = new Schema(
@@ -19,9 +19,13 @@ const accountSchema = new Schema(
     },
     accessToken: {
       type: String,
+      set: (value) => encrypt(value),
+      get: (value) => decrypt(value),
     },
     refreshToken: {
       type: String,
+      set: (value) => encrypt(value),
+      get: (value) => decrypt(value),
     },
     role: {
       type: String,
@@ -40,5 +44,6 @@ const accountSchema = new Schema(
   },
   { timestamps: true }
 );
+accountSchema.set("toJSON", { getters: true });
 
 module.exports = mongoose.model("Accounts", accountSchema);
