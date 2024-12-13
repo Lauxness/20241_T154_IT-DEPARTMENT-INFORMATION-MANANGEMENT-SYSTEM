@@ -21,37 +21,38 @@ exports.googleAuth = async (req, res) => {
 
     if (!currentUser) {
       return res.status(404).json({ message: "Account is not Registered" });
-    } else {
-      currentUser.googleId = id;
-      currentUser.name = name;
-      currentUser.emailAddress = email;
-      currentUser.profilePicture = picture;
-      currentUser.accessToken = googleRes.tokens.access_token;
-      currentUser.refreshToken = googleRes.tokens.refresh_token;
-
-      const updatedUser = await currentUser.save();
-
-      const userPayload = {
-        id: updatedUser._id,
-        googleId: updatedUser.googleId,
-        name: updatedUser.name,
-        emailAddress: updatedUser.emailAddress,
-        profilePicture: updatedUser.profilePicture,
-        role: updatedUser.role,
-        assignedYear: updatedUser.assignedYear,
-        assignedProgram: updatedUser.assignedProgram,
-      };
-
-      const token = jwt.sign(userPayload, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_TIMEOUT,
-      });
-
-      res.status(200).json({
-        message: "success",
-        token,
-        user: userPayload,
-      });
     }
+    if (!currentUser.isActive) {
+      return res.status(404).json({ message: "Account has been deactivated" });
+    }
+    currentUser.googleId = id;
+    currentUser.name = name;
+    currentUser.emailAddress = email;
+    currentUser.profilePicture = picture;
+    currentUser.accessToken = googleRes.tokens.access_token;
+    currentUser.refreshToken = googleRes.tokens.refresh_token;
+
+    const updatedUser = await currentUser.save();
+
+    const userPayload = {
+      id: updatedUser._id,
+      googleId: updatedUser.googleId,
+      name: updatedUser.name,
+      emailAddress: updatedUser.emailAddress,
+      profilePicture: updatedUser.profilePicture,
+      role: updatedUser.role,
+      assignedYear: updatedUser.assignedYear,
+      assignedProgram: updatedUser.assignedProgram,
+    };
+    const token = jwt.sign(userPayload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_TIMEOUT,
+    });
+
+    res.status(200).json({
+      message: "success",
+      token,
+      user: userPayload,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({

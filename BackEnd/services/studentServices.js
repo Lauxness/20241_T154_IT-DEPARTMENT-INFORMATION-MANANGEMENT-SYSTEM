@@ -59,12 +59,15 @@ const updateStudent = async (req, res) => {
   const studentId = req.params.id;
   const updatedData = req.body;
   const officerId = req.user.id;
-  const { email, phoneNumber } = updatedData;
+  const { email, phoneNumber, semesterGWA } = updatedData;
   if (!email || !/^[a-zA-Z0-9._%+-]+@student\.buksu\.edu\.ph$/.test(email)) {
     return res.status(400).json({ message: "Email Address is not valid" });
   }
   if (!phoneNumber || !/^(?:\+63|63|0)9\d{9}$/.test(phoneNumber)) {
     return res.status(400).json({ message: "Phone number is not valid" });
+  }
+  if (semesterGWA && !/^([1-4](\.\d{1,2})?|5\.00)$/.test(semesterGWA)) {
+    return res.status(400).json({ message: "Student GWA is not valid" });
   }
 
   const session = await mongoose.startSession();

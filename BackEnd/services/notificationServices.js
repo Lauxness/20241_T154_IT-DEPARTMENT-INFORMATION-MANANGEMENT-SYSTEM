@@ -81,9 +81,11 @@ const notifyAllStudents = async (req, res) => {
 
     const students = semesterStudents[0].students;
 
-    let notifiedCount = 0; // Track the number of students notified
+    const activeStudents = students.filter((student) => !student.isArchived);
 
-    for (const student of Object.values(students)) {
+    let notifiedCount = 0;
+
+    for (const student of Object.values(activeStudents)) {
       const defaultRequirements = [
         "Certificate of Good Moral",
         "Vaccination Card",
@@ -111,11 +113,11 @@ const notifyAllStudents = async (req, res) => {
 
           console.log(`Email sent to ${student.studentName}`);
 
-          // Update the lastNotified timestamp
           student.lastNotified = currentTime;
-          await student.save(); // Assuming `student` is a Mongoose model instance
+          await student.save();
+          instance;
 
-          notifiedCount++; // Increment the counter
+          notifiedCount++;
         } catch (error) {
           console.error(
             `Error sending email to ${student.studentName}: ${error}`

@@ -21,8 +21,6 @@ const drive = google.drive({
 
 const homePage = async (req, res) => {
   console.log(req.user);
-  /*   const role = req.user.role;
-  const parameter = req.params.semester; */
   try {
     const semesterStudents = await Semester.find()
       .sort({ createdAt: -1 })
@@ -71,7 +69,7 @@ const getStudentBySemester = async (req, res) => {
 const addStudent = async (req, res) => {
   const newStudent = req.body;
   const id = req.user.id;
-  const { studentId, email, phoneNumber } = newStudent;
+  const { studentId, email, phoneNumber, semesterGWA } = newStudent;
   if (!studentId || !/^220\d{7}$/.test(studentId)) {
     return res.status(400).json({ message: "Student ID is not valid" });
   }
@@ -81,7 +79,9 @@ const addStudent = async (req, res) => {
   if (!phoneNumber || !/^(?:\+63|63|0)9\d{9}$/.test(phoneNumber)) {
     return res.status(400).json({ message: "Phone number is not valid" });
   }
-
+  if (semesterGWA && !/^([1-4](\.\d{1,2})?|5\.00)$/.test(semesterGWA)) {
+    return res.status(400).json({ message: "Student GWA is not valid" });
+  }
   const session = await mongoose.startSession();
   session.startTransaction();
 
