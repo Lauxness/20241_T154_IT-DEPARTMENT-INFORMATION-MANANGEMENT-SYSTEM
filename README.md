@@ -6,9 +6,7 @@
 
 # Do this to run the code :>
 
-# npm i express --save
-
-# npm i nodemon --save-dev
+# npm i --force (in frontend)
 
 # NAME OF STUDENTS:
 
