@@ -45,9 +45,9 @@ export const Features = () => {
             <div className={styles.featuresItemText}>
               <h3>Notifications</h3>
               <p>
-                Automated alerts notify officers of any missing or incomplete
-                documents, facilitating timely communication and helping to keep
-                the enrollment process on track.
+                Notify students of any missing or incomplete documents,
+                facilitating timely communication and helping to keep the
+                enrollment process on track.
               </p>
             </div>
           </li>
