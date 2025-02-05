@@ -86,10 +86,11 @@ const uploadImage = async (req, res) => {
     await session.commitTransaction();
     res.status(200).json({ message: "File has been uploaded!" });
   } catch (error) {
+    console.log(error);
     await session.abortTransaction();
 
-    res.status(500).json({
-      message: `Internal Server Error!`,
+    return res.status(500).json({
+      message: `Intl Server Error!`,
     });
   } finally {
     session.endSession();
@@ -250,11 +251,9 @@ const deleteRequirementImage = async (req, res) => {
     };
     await activityLog.create([logEntry], { session });
     await session.commitTransaction();
-    return res
-      .status(200)
-      .json({
-        message: "Requirement has been deleted and Requirement status updated!",
-      });
+    return res.status(200).json({
+      message: "Requirement has been deleted and Requirement status updated!",
+    });
   } catch (error) {
     await session.abortTransaction();
     console.error("Error during requirement deletion:", error);

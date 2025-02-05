@@ -61,6 +61,7 @@ const notifyStudent = async (req, res) => {
     client.sms.message(smsCallBack, phone_number, message, messageType);
     return res.status(200).json({ message: "Student has been notified!" });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -148,62 +149,39 @@ const smsCallBack = (error, responseBody) => {
   }
 };
 const sendEmail = async (toEmail, missingRequirements, name) => {
-  const REFRESH_TOKEN_FOR_EMAIL = process.env.REFRESH_TOKEN_FOR_DRIVE;
-  const GOOGLE_CLIENT_ID = process.env.CLIENT_ID;
-  const GOOGLE_CLIENT_SECRET = process.env.CLIENT_SECRET;
-  const fromEmail = process.env.ACC_EMAIL_SENDER;
-  console.log(REFRESH_TOKEN_FOR_EMAIL);
-  const oauth2Client = new google.auth.OAuth2(
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET
-  );
-  oauth2Client.setCredentials({
-    refresh_token: REFRESH_TOKEN_FOR_EMAIL,
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "rojoreyanthony@gmail.com",
+      pass: "xpnxfupkeziuzsf",
+    },
   });
-  const accessToken = await oauth2Client.getAccessToken();
-
+  const mailOptions = {
+    from: "BukSU IT DEPARTMENT <no-reply@buksu.edu>",
+    to: toEmail,
+    subject: "Remiders for your missing requirements!",
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <p style="font-size: 16px;">Good day,</p>
+  
+        <p style="font-size: 16px;">
+         Hello ${name}, We are reminding you for your missing requirements: <strong>${missingRequirements}</strong>. You are required to pass it as soon as possible.
+        <p style="font-size: 16px; margin-top: 30px;">
+          <strong>Thank you,</strong><br />
+          <span style="font-size: 16px; color: #555;">BukSU IT Department</span>
+        </p>
+        <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;" />
+        <p style="font-size: 12px; color: #999;">
+          This is an automated message. Please do not reply to this email.
+        </p>
+      </div>
+    `,
+  };
   try {
-    const CLIENT_ID = process.env.CLIENT_ID;
-    const CLIENT_SECRET = process.env.CLIENT_SECRET;
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: fromEmail,
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN_FOR_EMAIL,
-        accessToken: accessToken,
-      },
-    });
-
-    const mailOptions = {
-      from: "BukSU IT DEPARTMENT <no-reply@buksu.edu>",
-      to: toEmail,
-      subject: "Remiders for your missing requirements!",
-      html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-          <p style="font-size: 16px;">Good day,</p>
-    
-          <p style="font-size: 16px;">
-           Hello ${name}, We are reminding you for your missing requirements: <strong>${missingRequirements}</strong>. You are required to pass it as soon as possible.
-          <p style="font-size: 16px; margin-top: 30px;">
-            <strong>Thank you,</strong><br />
-            <span style="font-size: 16px; color: #555;">BukSU IT Department</span>
-          </p>
-          <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;" />
-          <p style="font-size: 12px; color: #999;">
-            This is an automated message. Please do not reply to this email.
-          </p>
-        </div>
-      `,
-    };
-    const result = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", result);
-    return result;
+    const response = await transporter.sendMail(mailOptions);
+    return response;
   } catch (err) {
-    console.error("Failed to send email:", err.message);
-    throw new Error("Email sending failed. Please try again.");
+    console.log(err);
   }
 };
 
