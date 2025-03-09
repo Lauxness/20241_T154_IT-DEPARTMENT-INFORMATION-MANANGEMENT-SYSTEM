@@ -26,6 +26,7 @@ const drive = google.drive({
 const uploadImage = async (req, res) => {
   const studentId = req.params.id;
   const id = req.user.id;
+  console.log("asgdhfjkagsfhjagsdfhjasdf");
   const requirementName = req.body.requirementName;
 
   const session = await mongoose.startSession();
@@ -39,7 +40,9 @@ const uploadImage = async (req, res) => {
     if (!student) {
       return res.status(404).json({ message: "Student not found!" });
     }
-
+    console.log(
+      "aghsdjfgasdjfhgashjdfgahjsdgfahjsdfahjsdfghsadfgasdjfhgasjdfhg"
+    );
     const response = await drive.files.create({
       requestBody: {
         name: requirementName,
@@ -51,6 +54,7 @@ const uploadImage = async (req, res) => {
         body: fs.createReadStream(filepath),
       },
     });
+    console.log(response);
 
     console.log("File uploaded successfully:", response.data);
     const fileData = await generatePublicUrlForFile(response.data.id);
@@ -86,11 +90,9 @@ const uploadImage = async (req, res) => {
     await session.commitTransaction();
     res.status(200).json({ message: "File has been uploaded!" });
   } catch (error) {
-    console.log(error);
     await session.abortTransaction();
-
     return res.status(500).json({
-      message: `Intl Server Error!`,
+      message: `Internal Server Error!`,
     });
   } finally {
     session.endSession();
@@ -145,7 +147,6 @@ const updateRequirement = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    console.log(student);
     const response = await drive.files.create({
       requestBody: {
         name: requirementName,
@@ -157,7 +158,7 @@ const updateRequirement = async (req, res) => {
         body: fs.createReadStream(filepath),
       },
     });
-    console.log(response);
+
     const fileData = await generatePublicUrlForFile(response.data.id);
     const { webContentLink, webViewLink, thumbnailLink } = fileData;
 
@@ -179,7 +180,6 @@ const updateRequirement = async (req, res) => {
       { session }
     );
     const fileId = requirement.fileId;
-    console.log("adshfajkshfajksdhfajkshfajksfhsakjdfhajksfhaskdfadhjksf");
     if (deleteFromDrive(fileId)) {
       const logEntry = {
         operation: "update",
@@ -209,7 +209,6 @@ const updateRequirement = async (req, res) => {
 const deleteRequirementImage = async (req, res) => {
   const studentID = req.params.id;
   const requirementId = req.params.reqId;
-  console.log("requirement ID", requirementId);
   const id = req.user.id;
   const session = await mongoose.startSession();
   session.startTransaction();

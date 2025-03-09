@@ -20,7 +20,6 @@ const drive = google.drive({
 });
 
 const homePage = async (req, res) => {
-  console.log(req.user);
   try {
     const semesterStudents = await Semester.find()
       .sort({ createdAt: -1 })
@@ -184,9 +183,7 @@ const addNewSemester = async (req, res) => {
       semester: semester,
       schoolYear: schoolYear,
     });
-    console.log(checkSemester.length);
     if (checkSemester.length != 0) {
-      console.log("Semester Already Exists!");
       return res.status(409).json({ message: "Semester Already Exists!" });
     }
 

@@ -114,7 +114,6 @@ const notifyAllStudents = async (req, res) => {
 
           student.lastNotified = currentTime;
           await student.save();
-          instance;
 
           notifiedCount++;
         } catch (error) {
@@ -153,7 +152,7 @@ const sendEmail = async (toEmail, missingRequirements, name) => {
     service: "gmail",
     auth: {
       user: "rojoreyanthony@gmail.com",
-      pass: "xpnxfupkeziuzsf",
+      pass: "dxxoxiqyefyytqsa",
     },
   });
   const mailOptions = {
