@@ -34,10 +34,10 @@ const addEnrollmentOfficer = async (req, res) => {
       session.endSession();
       return res.status(400).json({ message: "Email Address is not valid" });
     }
+
     const existingAccount = await Accounts.findOne({ emailAddress }).session(
       session
     );
-
     if (existingAccount && existingAccount.isActive === true) {
       await session.abortTransaction();
       session.endSession();
@@ -108,41 +108,15 @@ const addEnrollmentOfficer = async (req, res) => {
   }
 };
 
-const sendEmail = async (
-  fromEmail,
-  toEmail,
-  assignedProgram,
-  assignedYear,
-  refresh_token
-) => {
-  const REFRESH_TOKEN_FOR_EMAIL = refresh_token;
-  const GOOGLE_CLIENT_ID = process.env.CLIENT_ID;
-  const GOOGLE_CLIENT_SECRET = process.env.CLIENT_SECRET;
-  console.log(REFRESH_TOKEN_FOR_EMAIL);
-  const oauth2Client = new google.auth.OAuth2(
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET
-  );
-  oauth2Client.setCredentials({
-    refresh_token: REFRESH_TOKEN_FOR_EMAIL,
+const sendEmail = async (toEmail, assignedProgram, assignedYear) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "rojoreyanthony@gmail.com",
+      pass: "dxxoxiqyefyytqsa",
+    },
   });
-  const accessToken = await oauth2Client.getAccessToken();
-
   try {
-    const CLIENT_ID = process.env.CLIENT_ID;
-    const CLIENT_SECRET = process.env.CLIENT_SECRET;
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: fromEmail,
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN_FOR_EMAIL,
-        accessToken: accessToken,
-      },
-    });
-
     const mailOptions = {
       from: "BukSU IT DEPARTMENT <no-reply@buksu.edu>",
       to: toEmail,
