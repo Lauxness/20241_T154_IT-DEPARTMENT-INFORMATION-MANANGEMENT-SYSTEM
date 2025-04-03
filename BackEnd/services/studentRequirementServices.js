@@ -90,6 +90,7 @@ const uploadImage = async (req, res) => {
     await session.commitTransaction();
     res.status(200).json({ message: "File has been uploaded!" });
   } catch (error) {
+    console.log(error);
     await session.abortTransaction();
     return res.status(500).json({
       message: `Internal Server Error!`,

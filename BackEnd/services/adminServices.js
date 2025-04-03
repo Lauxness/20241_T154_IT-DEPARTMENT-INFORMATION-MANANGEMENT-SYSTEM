@@ -29,7 +29,7 @@ const addEnrollmentOfficer = async (req, res) => {
       assignedProgram,
     } = req.body;
     const emailTestRegex = new RegExp(process.env.EMAIL_TEST);
-    if (!(emailAddress && emailTestRegex.test(emailAddress))) {
+    if (emailAddress && emailTestRegex.test(emailAddress)) {
       await session.abortTransaction();
       session.endSession();
       return res.status(400).json({ message: "Email Address is not valid" });
