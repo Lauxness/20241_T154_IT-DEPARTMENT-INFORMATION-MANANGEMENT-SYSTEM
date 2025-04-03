@@ -110,6 +110,7 @@ function OfficerModal(props) {
               required
               className={styles.input}
               value={emailAddress}
+              disabled={props.initialOfficerData?._id}
               onChange={(e) => setEmailAddress(e.target.value)}
             />
           </div>
