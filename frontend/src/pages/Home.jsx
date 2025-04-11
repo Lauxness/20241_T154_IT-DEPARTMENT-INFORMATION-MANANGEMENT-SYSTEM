@@ -399,98 +399,96 @@ function Home() {
         />
         <div
           style={{
-            width: "100%",
+            minWidth: "calc(100% - 320px)",
             display: "flex",
             flexDirection: "column",
             gap: "10px",
             marginLeft: "20px",
+            width: "100%",
             position: "relative",
           }}
         >
           <div
             style={{
-              paddingBottom: "5px",
               display: "flex",
+
               width: "100%",
-              justifyContent: "space-between",
               alignItems: "center",
               gap: "10px",
+              maxHeight: "50px",
+              flex: "1",
+              paddingRight: "10px",
             }}
           >
-            <div
+            <button
               style={{
-                display: "flex",
-                height: "100%",
-                alignItems: "center",
-                gap: "10px",
-                flex: "1",
-                paddingRight: "10px",
+                flex: 1,
+                maxWidth: "200px",
+                height: "80%",
+                border: "none",
+                fontSize: "15px",
+                color: "white",
+                backgroundColor: "#2d55fb",
+                borderRadius: "4px",
               }}
+              onClick={() => handleEdit(null)}
             >
-              <button
-                style={{
-                  width: "200px",
-                  height: "80%",
-                  border: "none",
-                  fontSize: "15px",
-                  color: "white",
-                  backgroundColor: "#2d55fb",
-                  borderRadius: "4px",
-                }}
-                onClick={() => handleEdit(null)}
-              >
-                Add student
-              </button>
-              <SearchBar
-                onChange={(e) => searchHandler(e)}
-                style={{
-                  boxShadow: "0px 1px 2px rgba(141, 192, 247,5)",
-                  height: "80%",
-                  flex: "1",
-                  margin: "0",
-                }}
-              />
-              <select
-                name="semester"
-                id="semester"
-                style={{
-                  height: "80%",
-                  boxShadow: "0px 1px 2px rgba(141, 192, 247, 5)",
-                  outline: "none",
-                  border: "none",
-                  padding: "0 10px",
-                }}
-                value={selectedSemester}
-                onChange={(e) => handleSemesterChange(e)}
-              >
-                {semesters.map((s, index) => (
-                  <option key={index} value={s.schoolYear + " " + s.semester}>
-                    SY. {s.schoolYear} {s.semester} Semester
-                  </option>
-                ))}
-                {userInfo.role === "admin" && (
-                  <>
-                    <option value="add">Add Semester</option>
-                    <option value="edit">Edit Semester</option>
-                  </>
-                )}
-              </select>
+              Add student
+            </button>
+            <SearchBar
+              onChange={(e) => searchHandler(e)}
+              style={{
+                boxShadow: "0px 1px 2px rgba(141, 192, 247,5)",
+                height: "80%",
 
-              <button
-                style={{
-                  height: "80%",
-                  border: "none",
-                  fontSize: "15px",
-                  color: "white",
-                  backgroundColor: "#2b9447",
-                  borderRadius: "4px",
-                  padding: "0 10px",
-                }}
-                onClick={handelNotifyAll}
-              >
-                Notify all
-              </button>
-            </div>
+                flex: "1",
+                margin: "0",
+              }}
+            />
+            <select
+              name="semester"
+              id="semester"
+              style={{
+                height: "80%",
+                boxShadow: "0px 1px 2px rgba(141, 192, 247, 5)",
+                outline: "none",
+                flex: 1,
+                border: "none",
+                padding: "0 10px",
+                maxWidth: "200px",
+              }}
+              value={selectedSemester}
+              onChange={(e) => handleSemesterChange(e)}
+            >
+              {semesters.map((s, index) => (
+                <option key={index} value={s.schoolYear + " " + s.semester}>
+                  SY. {s.schoolYear} {s.semester} Semester
+                </option>
+              ))}
+              {userInfo.role === "admin" && (
+                <>
+                  <option value="add">Add Semester</option>
+                  <option value="edit">Edit Semester</option>
+                </>
+              )}
+            </select>
+
+            <button
+              style={{
+                height: "80%",
+                border: "none",
+                fontSize: "15px",
+                color: "white",
+                flex: 1,
+                maxWidth: "150px",
+                backgroundColor: "#2b9447",
+                borderRadius: "4px",
+                padding: "0 10px",
+              }}
+              onClick={handelNotifyAll}
+            >
+              Notify all
+            </button>
           </div>
           {loading ? (
             <OvalLoader />
@@ -503,6 +501,7 @@ function Home() {
               pagination
               highlightOnHover
               pointerOnHover
+              style={{ height: "100%" }}
             />
           )}
         </div>

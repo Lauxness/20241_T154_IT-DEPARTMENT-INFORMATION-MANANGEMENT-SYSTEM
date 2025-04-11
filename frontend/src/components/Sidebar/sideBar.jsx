@@ -104,51 +104,30 @@ function SidebarComponent(props) {
         }}
       >
         <MenuItem
+          active={props.currentPage === "chart"}
+          component={<Link to="/dashboard" />}
+          icon={<MdAreaChart color="#2d55fb" fontSize="20px" />}
+        >
+          Dashboard
+        </MenuItem>
+
+        {props.userInfo?.role === "admin" ? (
+          <MenuItem
+            component={<Link to="/enrollment_officers" />}
+            active={props.currentPage === "enrollmentOfficers"}
+            icon={<MdSupervisorAccount color="#2d55fb" fontSize="20px" />}
+          >
+            Enrollment Officers
+          </MenuItem>
+        ) : null}
+
+        <MenuItem
           active={props.currentPage === "home"}
           component={<Link to="/home" />}
           icon={<MdPerson3 color="#2d55fb" fontSize="20px" />}
         >
           Students
         </MenuItem>
-        <SubMenu
-          active={
-            props.currentPage === "enrollmentOfficers" ||
-            props.currentPage === "chart" ||
-            props.currentPage === "generate_report"
-          }
-          defaultOpen={
-            props.currentPage === "enrollmentOfficers" ||
-            props.currentPage === "chart"
-          }
-          label="Dashboard"
-          icon={<MdStackedBarChart color="#2d55fb" fontSize="20px" />}
-        >
-          <MenuItem
-            active={props.currentPage === "chart"}
-            component={<Link to="/dashboard" />}
-            icon={<MdAreaChart color="#2d55fb" fontSize="20px" />}
-          >
-            Chart
-          </MenuItem>
-          <MenuItem
-            active={props.currentPage === "generate_report"}
-            onClick={() => handleDownload()}
-            icon={<MdDownload color="#2d55fb" fontSize="20px" />}
-          >
-            Download Report
-          </MenuItem>
-
-          {props.userInfo?.role === "admin" ? (
-            <MenuItem
-              component={<Link to="/enrollment_officers" />}
-              active={props.currentPage === "enrollmentOfficers"}
-              icon={<MdSupervisorAccount color="#2d55fb" fontSize="20px" />}
-            >
-              Enrollment Officers
-            </MenuItem>
-          ) : null}
-        </SubMenu>
-
         <MenuItem
           active={props.currentPage === "archive"}
           component={<Link to="/archived_students" />}
@@ -173,6 +152,13 @@ function SidebarComponent(props) {
         >
           <div className="notifCount">{notificationLength || 0}</div>
           Notifications
+        </MenuItem>
+        <MenuItem
+          active={props.currentPage === "generate_report"}
+          onClick={() => handleDownload()}
+          icon={<MdDownload color="#2d55fb" fontSize="20px" />}
+        >
+          Download Report
         </MenuItem>
         <MenuItem
           active={props.currentPage === "faq"}

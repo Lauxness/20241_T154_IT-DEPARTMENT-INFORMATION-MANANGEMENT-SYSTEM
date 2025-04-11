@@ -61,7 +61,7 @@ function GoogleLogin(props) {
 
       console.log("User Info:", userInfo);
       props.setIsAuthenticated(true);
-      navigate("/home");
+      navigate("/dashboard");
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Unexpected error";
       console.error("Error from server:", errorMessage);
