@@ -87,13 +87,7 @@ const addEnrollmentOfficer = async (req, res) => {
       }
     }
 
-    await sendEmail(
-      fromEmail,
-      emailAddress,
-      assignedProgram,
-      assignedYear,
-      refresh_token
-    );
+    await sendEmail(emailAddress, assignedProgram, assignedYear);
     await session.commitTransaction();
     session.endSession();
 

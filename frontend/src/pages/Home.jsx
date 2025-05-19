@@ -106,19 +106,6 @@ function Home() {
     }
   };
 
-  const showSwalTokenExp = () => {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Please login first.",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem("user-info");
-        navigate("/");
-      }
-    });
-  };
-
   const showSwal = async (data) => {
     if (selectedSemester !== currentSemester) {
       return Swal.fire(
@@ -284,6 +271,7 @@ function Home() {
           }}
         >
           <button
+            title="Archive"
             style={{
               backgroundColor: "#f44960",
               padding: "5px ",
@@ -297,6 +285,7 @@ function Home() {
             <MdArchive fontSize="20px" />
           </button>
           <button
+            title="Edit"
             style={{
               backgroundColor: "#2b9447",
               padding: "5px",

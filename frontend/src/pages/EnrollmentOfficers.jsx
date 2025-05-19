@@ -202,6 +202,7 @@ function Home() {
           }}
         >
           <button
+            title="Promote as admin"
             style={{
               backgroundColor: "#2d55fb",
               padding: "5px ",
@@ -215,6 +216,7 @@ function Home() {
             <FaUser fontSize="20px" />
           </button>
           <button
+            title="Remove enrollment officer"
             style={{
               backgroundColor: "#f44960",
               padding: "5px ",
@@ -228,6 +230,7 @@ function Home() {
             <MdDeleteForever fontSize="20px" />
           </button>
           <button
+            title="Edit enrollment officer"
             style={{
               backgroundColor: "#2b9447",
               padding: "5px",
@@ -335,6 +338,7 @@ function Home() {
                 Add Officer
               </button>
               <SearchBar
+                placeholder="Search via email"
                 onChange={(e) => searchHandler(e)}
                 style={{
                   boxShadow: "0px 1px 2px rgba(141, 192, 247,5)",

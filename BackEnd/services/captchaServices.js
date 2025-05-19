@@ -5,6 +5,7 @@ dotenv.config();
 
 const verifyCaptcha = async (req, res) => {
   const { captcha } = req.body;
+  console.log("ahsdjfhasjkdfhasjkfhaksdf");
 
   if (!captcha) {
     return res

@@ -64,7 +64,7 @@ function LoginModal(props) {
       <div className="pop-up-inner" onClick={(e) => e.stopPropagation()}>
         <h2>Sign in with Google</h2>
         <ReCAPTCHA
-          sitekey="6LcjQm0qAAAAADIuGQVgIIlFR_rtgpm0dcad97ly"
+          sitekey="6LdMEigrAAAAAJZL0cYgrk1WPbUJ1jYG1IpTjcpR"
           onChange={captchaHandler}
         />
         {isLoading ? (
